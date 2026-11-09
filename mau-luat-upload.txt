@@ -1,0 +1,24 @@
+CHƯƠNG I
+QUY ĐỊNH CHUNG VỀ GIAO DỊCH ĐIỆN TỬ
+
+Điều 1. Phạm vi điều chỉnh
+Luật này quy định về việc thực hiện giao dịch bằng phương tiện điện tử trong hoạt động của các cơ quan nhà nước, trong lĩnh vực dân sự, kinh doanh, thương mại và các lĩnh vực khác do pháp luật quy định.
+
+Điều 6. Các hành vi bị nghiêm cấm trong giao dịch điện tử
+1. Lợi dụng giao dịch điện tử xâm phạm đến lợi ích quốc gia, dân tộc, an ninh quốc gia, trật tự, an toàn xã hội, lợi ích công cộng, quyền và lợi ích hợp pháp của cơ quan, tổ chức, cá nhân.
+2. Cản trở hoặc ngăn chặn trái phép quá trình truyền, gửi, nhận thông điệp dữ liệu hoặc có hành vi khác nhằm phá hoại hệ thống thông tin phục vụ giao dịch điện tử.
+3. Thu thập, cung cấp, sử dụng, tiết lộ, hiển thị, phát tán, kinh doanh trái pháp luật thông điệp dữ liệu.
+4. Giả mạo, làm sai lệch hoặc xóa, hủy, sao chép, di chuyển trái pháp luật một phần hoặc toàn bộ thông điệp dữ liệu.
+
+CHƯƠNG II
+THÔNG ĐIỆP DỮ LIỆU VÀ CHỮ KÝ ĐIỆN TỬ
+
+Điều 8. Giá trị pháp lý của thông điệp dữ liệu
+1. Thông tin trong thông điệp dữ liệu không bị phủ nhận giá trị pháp lý chỉ vì thông tin đó được thể hiện dưới dạng thông điệp dữ liệu.
+2. Trường hợp pháp luật yêu cầu thông tin phải được thể hiện bằng văn bản thì thông điệp dữ liệu được coi là đáp ứng yêu cầu nếu thông tin trong thông điệp dữ liệu đó có thể truy cập và sử dụng được để tham chiếu.
+
+Điều 12. Lưu trữ thông điệp dữ liệu
+1. Trường hợp pháp luật yêu cầu văn bản, chứng từ hoặc hồ sơ phải được lưu trữ thì văn bản, chứng từ hoặc hồ sơ đó có thể được lưu trữ dưới dạng thông điệp dữ liệu khi đáp ứng các điều kiện sau đây:
+a) Nội dung của thông điệp dữ liệu đó có thể truy cập và sử dụng được để tham chiếu khi cần thiết;
+b) Nội dung của thông điệp dữ liệu đó được lưu trong chính khuôn dạng mà nó được khởi tạo, gửi, nhận hoặc trong khuôn dạng cho phép thể hiện chính xác nội dung thông điệp dữ liệu đó;
+c) Thông điệp dữ liệu đó được lưu trữ theo một cách thức nhất định cho phép xác định nguồn gốc khởi tạo, nơi đến, ngày giờ gửi hoặc nhận thông điệp dữ liệu trong thời hạn ít nhất 10 năm đối với chứng từ kế toán.

@@ -1,0 +1,21 @@
+{
+  "name": "LawStudy VN — Ôn Công Chức & Văn Bản Pháp Luật Mới Nhất",
+  "short_name": "LawStudy VN",
+  "description": "Ứng dụng phân tích tách luật, ôn thi trắc nghiệm công chức và cập nhật văn bản quyết định thông báo mới nhất từ vanban.phaplyvn.com & phapluat.gov.vn",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "assets/app-icon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

@@ -3,91 +3,108 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>LawStudy VN — Ôn Công Chức &amp; Học Thuộc Luật Thông Minh</title>
+  <title>LawStudy VN — Học Luật, Ôn Công Chức, Kế Toán &amp; Nhân Sự</title>
+  <meta name="description" content="Ứng dụng phân tích tách luật tự động, học nhanh điền khuyết kiểu Quizlet, thi thử và tra cứu văn bản các tỉnh, án lệ cho Công chức, Kế toán, Nhân sự" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/app-icon.jpg" />
+  <meta property="og:title" content="LawStudy VN — Học Luật &amp; Ôn Thi Thông Minh" />
+  <meta property="og:image" content="assets/hero-banner.jpg" />
+  <link rel="manifest" href="manifest.json" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 </head>
 <body>
-  <!-- Header hiện đại, ít chữ -->
+  <!-- Header tinh gọn, hiện đại -->
   <header class="app-header">
     <div class="brand">
       <button class="btn btn-sm mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Mở mục lục">
         ☰ Mục lục
       </button>
-      <div class="brand-logo">⚖️</div>
+      <img
+        id="header-app-icon"
+        src="assets/app-icon.jpg"
+        onerror="this.src='assets/favicon.svg'"
+        alt="LawStudy"
+        class="brand-avatar-img"
+      />
       <div class="brand-text">
-        <h1>
-          LawStudy
-          <span class="badge-version">Ôn Công Chức 2025</span>
-        </h1>
+        <h1>LawStudy <span class="badge-version">PRO</span></h1>
       </div>
     </div>
 
-    <!-- 4 Tab Chế độ trên Máy tính -->
+    <!-- 4 Tab chuẩn theo yêu cầu: Học luật | Học nhanh | Thi thử | Luật khác -->
     <nav class="mode-tabs" aria-label="Chế độ học">
       <button class="mode-tab active" data-mode="study" onclick="switchMode('study')">
-        📖 Học Luật
+        📖 Học luật
         <span class="tab-badge" id="badge-study-count">0</span>
       </button>
       <button class="mode-tab" data-mode="memorize" onclick="switchMode('memorize')">
-        🙈 Học Thuộc Nhanh
+        ⚡ Học nhanh
       </button>
       <button class="mode-tab" data-mode="exam" onclick="switchMode('exam')">
-        🎯 Thi Trắc Nghiệm (kienthucchung.vn)
-        <span class="tab-badge" id="badge-fc-count">0</span>
+        🎯 Thi thử
       </button>
       <button class="mode-tab" data-mode="amend" onclick="switchMode('amend')">
-        🔔 Báo Luật Mới &amp; Đề Xuất
-        <span class="tab-badge" id="badge-amend-count">5</span>
+        📚 Luật khác
+        <span class="tab-badge" id="badge-amend-count">Mới</span>
       </button>
     </nav>
 
     <div class="header-actions">
-      <button class="btn btn-sm" onclick="openPasteModal()" title="Dán văn bản luật mới">
-        📋 Dán Luật
-      </button>
-      <button class="btn btn-sm btn-portal" onclick="checkNewLawsAndPortal()" title="Kiểm tra văn bản sửa đổi mới nhất">
-        🔔 Kiểm tra Luật mới
-      </button>
+      <div class="demo-header-pill" onclick="openDemoInfoModal()" title="Thông tin Bản Demo Hệ thống Pháp luật Liên thông">
+        <img
+          src="assets/hero-banner.jpg"
+          onerror="this.src='assets/app-icon.jpg'"
+          alt="Demo Preview"
+          class="demo-header-thumb"
+        />
+        <span class="demo-header-btn">✨ Bản Demo</span>
+      </div>
     </div>
   </header>
 
   <div class="workspace">
-    <!-- Sidebar (Mục lục & Chọn luật - Tự động thành Drawer trượt trên điện thoại) -->
+    <!-- Sidebar cực gọn, không chữ thừa -->
     <aside class="sidebar" id="app-sidebar">
       <div style="display:flex;justify-content:space-between;align-items:center;" class="mobile-menu-btn">
-        <strong style="font-size:0.9rem;">📚 Chọn Luật &amp; Mục Lục</strong>
-        <button class="btn btn-sm" onclick="toggleMobileSidebar()">✖ Đóng</button>
+        <strong style="font-size:0.88rem;">📚 Chọn Luật &amp; Mục Lục</strong>
+        <button class="btn btn-sm" onclick="toggleMobileSidebar()">✖</button>
       </div>
 
       <div class="sidebar-section">
         <div class="sidebar-title">
-          <span>📚 Chọn Văn Bản Luật</span>
-          <span style="color:var(--accent-emerald);font-size:0.7rem;">8 văn bản</span>
+          <span>📚 Văn bản đang học</span>
+          <span id="saved-laws-count-badge" class="meta-tag">0 văn bản</span>
         </div>
 
-        <select id="sample-law-select" class="sample-select" style="margin-top:0;" onchange="loadSampleLaw(this.value); closeMobileSidebar();">
-          <optgroup label="🔥 5 Văn bản Trọng tâm 2025 của bạn">
-            <option value="vbhn_52_2025">📕 52/VBHN-VPQH (21/7/2025) - Hiến pháp</option>
-            <option value="luat_cbcc_80_2025">📘 Luật 80/2025/QH15 - Cán bộ, công chức</option>
-            <option value="luat_cqdp_72_2025">📗 Luật 72/2025/QH15 - Chính quyền địa phương</option>
-            <option value="vbhn_118_2025">📙 118/VBHN-VPQH (27/8/2025) - Phòng, chống tham nhũng</option>
-            <option value="nd_170_2025">📒 Nghị định 170/2025/NĐ-CP - Tuyển dụng công chức</option>
-          </optgroup>
-          <optgroup label="📂 Văn bản khác">
-            <option value="luat_lao_dong">📘 Bộ luật Lao động 2019</option>
-            <option value="luat_dat_dai">📗 Luật Đất đai 2024</option>
-            <option value="luat_giao_thong">📙 Luật Trật tự, ATGT đường bộ 2024</option>
-          </optgroup>
-        </select>
+        <!-- 1. Ô tìm kiếm số hiệu / tên văn bản học (tìm liên thông từ kho Luật khác) -->
+        <div class="sidebar-law-search-wrap">
+          <input
+            type="text"
+            id="sidebar-law-search"
+            class="sample-select"
+            style="margin-top:0;"
+            placeholder="🔍 Tìm số văn bản, tên luật để thêm/học..."
+            oninput="handleSidebarLawSearch(this.value)"
+          />
+          <div id="sidebar-search-results" class="sidebar-search-results"></div>
+        </div>
 
+        <!-- 2. Ở dưới: List các văn bản đang học đã lưu -->
+        <div class="saved-laws-header">
+          <span>📌 Danh sách văn bản đang học:</span>
+        </div>
+        <div id="saved-study-laws-list" class="saved-laws-list"></div>
+
+        <!-- 3. Dưới cùng: Phần tải văn bản luật vào đây -->
         <div class="dropzone" id="upload-dropzone" style="margin-top:0.65rem;">
-          <h4>📤 Tải file Luật (.DOCX, .PDF, .TXT)</h4>
-          <p>Chạm hoặc kéo thả để tự động tách Điều, Khoản</p>
+          <h4>📤 Tải văn bản luật vào đây (.DOCX, .PDF, .TXT)</h4>
           <input type="file" id="file-input" accept=".txt,.docx,.pdf,.md,.json" style="display:none;" />
         </div>
       </div>
@@ -95,7 +112,7 @@
       <!-- Tiến độ gọn -->
       <div class="sidebar-section">
         <div class="sidebar-title">
-          <span>📊 Tiến Độ Thuộc Bài</span>
+          <span>📊 Tiến độ thuộc</span>
           <strong id="progress-pct" style="color:var(--accent-emerald);">0%</strong>
         </div>
         <div class="progress-bar-wrap">
@@ -117,36 +134,36 @@
         </div>
       </div>
 
-      <!-- Cây mục lục -->
+      <!-- Mục lục Điều -->
       <div class="sidebar-section" style="flex:1;display:flex;flex-direction:column;">
         <div class="sidebar-title">
-          <span>🗂️ Mục Lục Nhanh</span>
+          <span>🗂️ Mục lục Điều khoản</span>
         </div>
         <ul class="toc-list" id="toc-list"></ul>
       </div>
     </aside>
 
-    <!-- Khung hiển thị chính -->
+    <!-- Khung nội dung chính -->
     <main class="main-content" id="main-view-container"></main>
   </div>
 
-  <!-- Thanh điều hướng dưới đáy cho Điện thoại (Mobile Bottom Bar) -->
+  <!-- Thanh điều hướng dưới đáy cho Điện thoại -->
   <nav class="mobile-bottom-nav" aria-label="Điều hướng di động">
     <button class="mob-nav-btn active" data-mode="study" onclick="switchMode('study')">
       <span class="mob-icon">📖</span>
-      <span>Học Luật</span>
+      <span>Học luật</span>
     </button>
     <button class="mob-nav-btn" data-mode="memorize" onclick="switchMode('memorize')">
-      <span class="mob-icon">🙈</span>
-      <span>Học Thuộc</span>
+      <span class="mob-icon">⚡</span>
+      <span>Học nhanh</span>
     </button>
     <button class="mob-nav-btn" data-mode="exam" onclick="switchMode('exam')">
       <span class="mob-icon">🎯</span>
-      <span>Thi Công Chức</span>
+      <span>Thi thử</span>
     </button>
     <button class="mob-nav-btn" data-mode="amend" onclick="switchMode('amend')">
-      <span class="mob-icon">🔔</span>
-      <span>Luật Mới</span>
+      <span class="mob-icon">📚</span>
+      <span>Luật khác</span>
     </button>
   </nav>
 
@@ -154,56 +171,113 @@
   <div class="modal-backdrop" id="paste-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>📋 Dán Văn Bản Luật</h3>
+        <h3>📋 Dán văn bản luật để tự động tách</h3>
         <button class="btn btn-sm" onclick="closePasteModal()">✖</button>
       </div>
       <input
         type="text"
         id="paste-law-title"
         class="input-field"
-        placeholder="Tên văn bản (VD: Nghị định 170/2025/NĐ-CP...)"
+        placeholder="Tên văn bản..."
       />
       <textarea
         id="paste-law-content"
         class="textarea-large"
-        placeholder="Dán nội dung luật vào đây để tự động tách Điều, Khoản, Điểm..."
+        placeholder="Dán nội dung luật vào đây..."
       ></textarea>
       <div style="display:flex;justify-content:flex-end;gap:0.5rem;">
         <button class="btn" onclick="closePasteModal()">Hủy</button>
-        <button class="btn btn-primary" onclick="submitPastedLaw()">⚡ Phân tích ngay</button>
+        <button class="btn btn-primary" onclick="submitPastedLaw()">⚡ Tách luật ngay</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Tạo đề xuất sửa đổi -->
-  <div class="modal-backdrop" id="amend-modal">
+  <!-- Modal Đọc Toàn Văn Văn Bản Mở Rộng To Ra (6 Mục chuẩn: Nội dung | Thuộc tính | Lược đồ | Lịch sử | Văn bản gốc | Tải về) -->
+  <div class="modal-backdrop" id="text-reader-modal">
+    <div class="modal-content reader-modal-content" id="reader-modal-box">
+      <div class="modal-header reader-modal-header">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:0.45rem;flex-wrap:wrap;">
+            <span class="article-badge" id="reader-doc-badge">Văn bản pháp luật</span>
+            <span class="meta-tag" id="reader-doc-status">Đang có hiệu lực</span>
+            <span class="meta-tag" id="reader-doc-inline-diff-badge" style="background:rgba(245,158,11,0.18);color:#fcd34d;border:1px solid rgba(245,158,11,0.35);">⚖️ Đã gắn Note điểm khác biệt trực tiếp trên toàn văn</span>
+          </div>
+          <h3 id="reader-doc-title" style="margin-top:0.35rem;font-size:1.08rem;line-height:1.45;">Tên văn bản</h3>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+          <button class="btn btn-sm btn-primary" id="reader-btn-save-study">📌 Lưu vào Học luật</button>
+          <button class="btn btn-sm" onclick="toggleReaderFullscreen()" title="Mở rộng toàn màn hình">⛶ Mở rộng tối đa</button>
+          <button class="btn btn-sm" onclick="closeTextReaderModal()">✖ Đóng</button>
+        </div>
+      </div>
+
+      <!-- Thanh 6 Tab chuẩn theo thứ tự yêu cầu: Nội dung | Thuộc tính | Lược đồ | Lịch sử | Văn bản gốc | Tải về -->
+      <div class="reader-toolbar">
+        <div class="reader-tabs-nav">
+          <button class="pill active" id="rtab-content" onclick="switchReaderSubTab('content')">📄 Nội dung</button>
+          <button class="pill" id="rtab-attributes" onclick="switchReaderSubTab('attributes')">📋 Thuộc tính</button>
+          <button class="pill" id="rtab-schema" onclick="switchReaderSubTab('schema')">🕸️ Lược đồ</button>
+          <button class="pill" id="rtab-history" onclick="switchReaderSubTab('history')">🕒 Lịch sử</button>
+          <button class="pill" id="rtab-original" onclick="switchReaderSubTab('original')">🖨️ Văn bản gốc</button>
+          <button class="pill" id="rtab-download" onclick="switchReaderSubTab('download')">⬇️ Tải về (.DOCX / .PDF)</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.38rem;flex-wrap:wrap;">
+          <button class="btn btn-sm" onclick="adjustReaderFontSize(-1)" title="Giảm cỡ chữ">A-</button>
+          <button class="btn btn-sm" onclick="adjustReaderFontSize(1)" title="Tăng cỡ chữ">A+</button>
+          <input
+            type="text"
+            id="reader-search-input"
+            class="reader-search-input"
+            placeholder="🔍 Tìm điều khoản, từ khóa trong văn bản..."
+            oninput="filterReaderText(this.value)"
+          />
+          <button class="btn btn-sm" id="reader-btn-speak" onclick="speakReaderCurrentDoc()">🔊 Đọc</button>
+          <button class="btn btn-sm" id="reader-btn-download-docx">📘 .DOCX</button>
+          <button class="btn btn-sm btn-portal" id="reader-btn-download-pdf">📕 .PDF</button>
+        </div>
+      </div>
+
+      <!-- Nội dung văn bản bằng chữ mở rộng to, rõ ràng -->
+      <div class="reader-paper" id="reader-paper-body"></div>
+    </div>
+  </div>
+
+  <!-- Modal Thông tin Bản Demo & Bộ Hình ảnh -->
+  <div class="modal-backdrop" id="assets-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>✍️ Đề Xuất Sửa Đổi Điều Luật</h3>
-        <button class="btn btn-sm" onclick="closeCustomAmendModal()">✖</button>
+        <h3>✨ Bản Demo — Hệ Thống Học Luật &amp; Tra Cứu Pháp Luật Liên Thông</h3>
+        <button class="btn btn-sm" onclick="closeAssetsModal()">✖</button>
       </div>
-      <select id="amend-article-select" class="input-field"></select>
-      <input
-        type="text"
-        id="amend-issue"
-        class="input-field"
-        placeholder="Vấn đề cần sửa đổi / cập nhật..."
-      />
-      <textarea
-        id="amend-proposed"
-        class="textarea-large"
-        style="min-height:110px;"
-        placeholder="Nội dung đề xuất mới..."
-      ></textarea>
-      <input
-        type="text"
-        id="amend-rationale"
-        class="input-field"
-        placeholder="Căn cứ (phapluat.gov.vn)..."
-      />
-      <div style="display:flex;justify-content:flex-end;gap:0.5rem;">
-        <button class="btn" onclick="closeCustomAmendModal()">Hủy</button>
-        <button class="btn btn-primary" onclick="submitCustomAmendment()">💾 Lưu đề xuất</button>
+      <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:12px;padding:0.9rem 1rem;margin-bottom:0.85rem;font-size:0.84rem;color:var(--text-secondary);">
+        <div style="font-weight:700;color:#fff;margin-bottom:0.35rem;font-size:0.92rem;">🚀 Tính năng Bản Demo Hiện Đại (Liên thông 4 Tab &amp; Đồng bộ 3 Cổng Pháp Luật):</div>
+        <ul style="padding-left:1.1rem;display:flex;flex-direction:column;gap:0.25rem;">
+          <li><strong>Đồng bộ tự động 30 phút/lần</strong> từ 3 cổng: <code>phapluat.gov.vn</code>, <code>vanban.phaplyvn.com</code> và <code>vbpl.vn</code>.</li>
+          <li><strong>Đọc toàn văn đầy đủ 100%</strong>, gắn <strong>Note điểm khác biệt so với luật trước trực tiếp trên từng Điều khoản</strong>.</li>
+          <li><strong>6 mục tra cứu chuyên sâu:</strong> Nội dung • Thuộc tính (11 tiêu chí) • Lược đồ • Lịch sử • Văn bản gốc scan • Tải về (.DOCX &amp; .PDF).</li>
+        </ul>
+      </div>
+      <div class="assets-showcase-grid">
+        <div class="asset-box">
+          <img src="assets/app-icon.jpg" onerror="this.src='assets/favicon.svg'" alt="App Icon" />
+          <strong style="font-size:0.78rem;">Icon App (1:1)</strong>
+          <a href="assets/app-icon.jpg" download="app-icon.jpg" class="btn btn-sm btn-primary" style="width:100%;">⬇️ Tải về</a>
+        </div>
+        <div class="asset-box">
+          <img src="assets/hero-banner.jpg" alt="Hero Banner" />
+          <strong style="font-size:0.78rem;">Ảnh Bìa Web (16:9)</strong>
+          <a href="assets/hero-banner.jpg" download="hero-banner.jpg" class="btn btn-sm btn-primary" style="width:100%;">⬇️ Tải về</a>
+        </div>
+        <div class="asset-box">
+          <img src="assets/favicon.svg" alt="Favicon SVG" />
+          <strong style="font-size:0.78rem;">Favicon (.SVG)</strong>
+          <a href="assets/favicon.svg" download="favicon.svg" class="btn btn-sm" style="width:100%;">⬇️ Tải về</a>
+        </div>
+        <div class="asset-box">
+          <img src="assets/icon-decision.svg" alt="Icon Văn bản" />
+          <strong style="font-size:0.78rem;">Icon Văn Bản (.SVG)</strong>
+          <a href="assets/icon-decision.svg" download="icon-decision.svg" class="btn btn-sm" style="width:100%;">⬇️ Tải về</a>
+        </div>
       </div>
     </div>
   </div>

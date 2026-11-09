@@ -10,43 +10,66 @@
 window.EXAM_SETS = [
   {
     id: "de_tong_hop_60",
-    title: "Đề Thi Thử Số 01: Tổng Hợp Kiến Thức Chung (Chuẩn 60 câu / 60 phút)",
-    source: "congchucvn.com & kienthucchung.vn",
+    title: "Đề Tổng Hợp 60 Câu (Chuẩn Vòng 1)",
     durationMinutes: 60,
     passScore: 30,
     questionCount: 60,
     filterKeys: ["vbhn_52_2025", "luat_cbcc_80_2025", "luat_cqdp_72_2025", "vbhn_118_2025", "nd_170_2025"],
-    description: "Mô phỏng 100% đề thi thật trên máy tính Vòng 1: Trộn đều 5 văn bản trọng tâm 2025 (Hiến pháp 52/VBHN, Luật CBCC 80/2025, Luật CQĐP 72/2025, Luật PCTN 118/VBHN, Nghị định 170/2025)."
+    description: "60 câu / 60 phút tổng hợp các văn bản trong chương trình học."
   },
   {
-    id: "de_so_02_bo_may",
-    title: "Đề Thi Số 02: Chuyên Đề Hiến Pháp (52/VBHN) & Chính Quyền Địa Phương 02 Cấp (72/2025/QH15)",
-    source: "congchucvn.com",
-    durationMinutes: 30,
-    passScore: 12,
-    questionCount: 24,
-    filterKeys: ["vbhn_52_2025", "luat_cqdp_72_2025"],
-    description: "Tập trung xoáy sâu vào chế độ chính trị, Mặt trận Tổ quốc Việt Nam, bộ máy nhà nước và mô hình chính quyền địa phương 02 cấp (tỉnh - xã)."
+    id: "de_hp_52",
+    title: "Đề Hiến Pháp (52/VBHN-VPQH)",
+    durationMinutes: 15,
+    passScore: 6,
+    questionCount: 12,
+    filterKeys: ["vbhn_52_2025"],
+    description: "Chế độ chính trị, Mặt trận Tổ quốc, Quốc hội & Chính quyền địa phương."
   },
   {
-    id: "de_so_03_cong_vu",
-    title: "Đề Thi Số 03: Chuyên Đề Luật Cán Bộ, Công Chức (80/2025/QH15) & Nghị Định 170/2025/NĐ-CP",
-    source: "kienthucchung.vn",
-    durationMinutes: 30,
-    passScore: 12,
-    questionCount: 24,
-    filterKeys: ["luat_cbcc_80_2025", "nd_170_2025"],
-    description: "Xoáy sâu vào vị trí việc làm, thi tuyển 2 vòng, tập sự 85%, đánh giá 4 mức, bổ nhiệm 5 năm và đạo đức công vụ."
+    id: "de_cbcc_80",
+    title: "Đề Luật Cán Bộ, Công Chức (80/2025/QH15)",
+    durationMinutes: 15,
+    passScore: 6,
+    questionCount: 12,
+    filterKeys: ["luat_cbcc_80_2025"],
+    description: "Nền công vụ liên thông, nghĩa vụ, đạo đức công vụ & xếp loại công chức."
   },
   {
-    id: "de_so_04_pctn",
-    title: "Đề Thi Số 04: Chuyên Đề Luật Phòng, Chống Tham Nhũng (118/VBHN-VPQH)",
-    source: "congchucvn.com & kienthucchung.vn",
-    durationMinutes: 20,
+    id: "de_cqdp_72",
+    title: "Đề Chính Quyền Địa Phương (72/2025/QH15)",
+    durationMinutes: 15,
+    passScore: 6,
+    questionCount: 12,
+    filterKeys: ["luat_cqdp_72_2025"],
+    description: "Mô hình 02 cấp (tỉnh - xã), đặc khu, phân quyền, phân cấp, ủy quyền."
+  },
+  {
+    id: "de_pctn_118",
+    title: "Đề Phòng, Chống Tham Nhũng (118/VBHN)",
+    durationMinutes: 15,
     passScore: 6,
     questionCount: 12,
     filterKeys: ["vbhn_118_2025"],
-    description: "Trọng tâm 12 hành vi tham nhũng khu vực nhà nước, 3 hành vi khu vực ngoài nhà nước, kê khai tài sản 10 ngày và biến động 300 triệu đồng."
+    description: "Các hành vi tham nhũng, quy tắc ứng xử, kê khai tài sản 10 ngày & 300 triệu."
+  },
+  {
+    id: "de_nd_170",
+    title: "Đề Nghị Định 170/2025/NĐ-CP (Tuyển Dụng & Quản Lý)",
+    durationMinutes: 15,
+    passScore: 6,
+    questionCount: 12,
+    filterKeys: ["nd_170_2025"],
+    description: "Thi tuyển 2 vòng, thu hút nhân tài, tập sự 85% & bổ nhiệm 05 năm."
+  },
+  {
+    id: "de_ke_toan_nhan_su",
+    title: "Đề Nghiệp Vụ Kế Toán & Nhân Sự - Lao Động",
+    durationMinutes: 15,
+    passScore: 5,
+    questionCount: 10,
+    filterKeys: ["luat_ke_toan", "luat_lao_dong"],
+    description: "Lưu trữ chứng từ kế toán, hợp đồng lao động, thử việc & chấm dứt HĐLĐ."
   }
 ];
 
@@ -1029,5 +1052,99 @@ window.KIENTHUCCHUNG_QUIZ_BANK = [
     correctIndex: 0,
     refArticle: "Khoản 3 Điều 42 Nghị định 170/2025/NĐ-CP",
     explanation: "Tỷ lệ phiếu kín đồng ý của tập thể lãnh đạo cơ quan, tổ chức là 'trên 50% tổng số thành viên'."
+  },
+
+  // =========================================================================
+  // PHẦN 6: LUẬT KẾ TOÁN & BỘ LUẬT LAO ĐỘNG - NHÂN SỰ (10 CÂU TRỌNG TÂM)
+  // =========================================================================
+  {
+    id: "kt_ns_01",
+    lawKey: "luat_ke_toan",
+    lawCode: "Luật Kế toán",
+    question: "Theo khoản 3 Điều 41 Luật Kế toán, tài liệu kế toán phải được đưa vào lưu trữ trong thời hạn bao lâu kể từ ngày kết thúc kỳ kế toán năm hoặc kết thúc công việc kế toán?",
+    options: [
+      "Trong thời hạn 12 tháng",
+      "Trong thời hạn 06 tháng",
+      "Trong thời hạn 24 tháng",
+      "Trong thời hạn 90 ngày"
+    ],
+    correctIndex: 0,
+    refArticle: "Khoản 3 Điều 41 Luật Kế toán",
+    explanation: "Tài liệu kế toán phải đưa vào lưu trữ trong thời hạn 12 tháng kể từ ngày kết thúc kỳ kế toán năm."
+  },
+  {
+    id: "kt_ns_02",
+    lawKey: "luat_ke_toan",
+    lawCode: "Luật Kế toán",
+    question: "Theo điểm a và điểm b khoản 4 Điều 41 Luật Kế toán, thời hạn lưu trữ đối với tài liệu kế toán dùng cho quản lý, điều hành và đối với chứng từ kế toán sử dụng trực tiếp để ghi sổ kế toán, lập báo cáo tài chính lần lượt là bao lâu?",
+    options: [
+      "Ít nhất là 05 năm (quản lý, điều hành) và ít nhất là 10 năm (ghi sổ kế toán, lập báo cáo tài chính)",
+      "Ít nhất là 03 năm và ít nhất là 05 năm",
+      "Ít nhất là 10 năm cho tất cả các loại tài liệu kế toán",
+      "Ít nhất là 05 năm và ít nhất là 20 năm"
+    ],
+    correctIndex: 0,
+    refArticle: "Khoản 4 Điều 41 Luật Kế toán",
+    explanation: "Cần nhớ 3 mốc lưu trữ kế toán: 05 năm (tài liệu quản lý, điều hành); 10 năm (chứng từ ghi sổ, sổ kế toán, BCTC năm); Vĩnh viễn (tài liệu có tính sử liệu, quan trọng)."
+  },
+  {
+    id: "kt_ns_03",
+    lawKey: "luat_ke_toan",
+    lawCode: "Luật Kế toán",
+    question: "Theo Điều 13 Luật Kế toán, hành vi nào sau đây bị nghiêm cấm trong công tác kế toán?",
+    options: [
+      "Để ngoài sổ kế toán tài sản, nợ phải trả của đơn vị kế toán hoặc lập hai hệ thống sổ kế toán tài chính trở lên",
+      "Lưu trữ chứng từ kế toán dưới dạng thông điệp dữ liệu điện tử",
+      "Phân loại, sắp xếp thông tin, số liệu kế toán theo trình tự thời gian",
+      "Sử dụng phần mềm kế toán để tự động tổng hợp báo cáo tài chính"
+    ],
+    correctIndex: 0,
+    refArticle: "Khoản 3, 5 Điều 13 Luật Kế toán",
+    explanation: "Để ngoài sổ kế toán tài sản/nợ phải trả và lập từ 02 hệ thống sổ kế toán tài chính trở lên là hành vi bị nghiêm cấm."
+  },
+  {
+    id: "kt_ns_04",
+    lawKey: "luat_lao_dong",
+    lawCode: "45/2019/QH14",
+    question: "Theo khoản 2 Điều 20 Bộ luật Lao động, khi hợp đồng lao động xác định thời hạn hết hạn mà người lao động vẫn tiếp tục làm việc thì trong thời hạn bao nhiêu ngày hai bên phải ký kết hợp đồng lao động mới?",
+    options: [
+      "Trong thời hạn 30 ngày kể từ ngày hợp đồng lao động hết hạn",
+      "Trong thời hạn 15 ngày kể từ ngày hợp đồng lao động hết hạn",
+      "Trong thời hạn 45 ngày kể từ ngày hợp đồng lao động hết hạn",
+      "Trong thời hạn 60 ngày kể từ ngày hợp đồng lao động hết hạn"
+    ],
+    correctIndex: 0,
+    refArticle: "Điểm a Khoản 2 Điều 20 Bộ luật Lao động",
+    explanation: "Trong thời hạn 30 ngày kể từ ngày HĐLĐ hết hạn, hai bên phải ký HĐLĐ mới; nếu quá 30 ngày không ký mới thì hợp đồng đó tự động trở thành HĐLĐ không xác định thời hạn."
+  },
+  {
+    id: "kt_ns_05",
+    lawKey: "luat_lao_dong",
+    lawCode: "45/2019/QH14",
+    question: "Theo Điều 25 và Điều 26 Bộ luật Lao động, thời gian thử việc đối với công việc cần trình độ từ cao đẳng trở lên là bao lâu và tiền lương thử việc ít nhất bằng bao nhiêu phần trăm mức lương của công việc đó?",
+    options: [
+      "Không quá 60 ngày; tiền lương thử việc ít nhất bằng 85% mức lương của công việc đó",
+      "Không quá 30 ngày; tiền lương thử việc ít nhất bằng 85% mức lương của công việc đó",
+      "Không quá 60 ngày; tiền lương thử việc ít nhất bằng 75% mức lương của công việc đó",
+      "Không quá 180 ngày; tiền lương thử việc bằng 100% mức lương của công việc đó"
+    ],
+    correctIndex: 0,
+    refArticle: "Điều 25, Điều 26 Bộ luật Lao động",
+    explanation: "Trình độ từ cao đẳng trở lên thử việc không quá 60 ngày (quản lý doanh nghiệp không quá 180 ngày, trung cấp không quá 30 ngày, việc khác không quá 06 ngày làm việc); lương thử việc ít nhất bằng 85%."
+  },
+  {
+    id: "kt_ns_06",
+    lawKey: "luat_lao_dong",
+    lawCode: "45/2019/QH14",
+    question: "Theo khoản 1 Điều 35 Bộ luật Lao động, người lao động làm việc theo hợp đồng lao động không xác định thời hạn khi đơn phương chấm dứt hợp đồng phải báo trước ít nhất bao nhiêu ngày?",
+    options: [
+      "Ít nhất 45 ngày",
+      "Ít nhất 30 ngày",
+      "Ít nhất 03 ngày làm việc",
+      "Ít nhất 60 ngày"
+    ],
+    correctIndex: 0,
+    refArticle: "Điểm a Khoản 1 Điều 35 Bộ luật Lao động",
+    explanation: "Thời hạn báo trước của NLĐ: Không xác định thời hạn = ít nhất 45 ngày; Xác định thời hạn từ 12-36 tháng = ít nhất 30 ngày; Dưới 12 tháng = ít nhất 03 ngày làm việc."
   }
 ];

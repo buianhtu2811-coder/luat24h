@@ -1,0 +1,376 @@
+Title: Thông tư 200/2014/TT-BTC của Bộ Tài chính
+
+URL Source: https://vbpl.vn/van-ban/chi-tiet/thong-tu-so-200-2014-tt-btc-huong-dan-che-do-ke-toan-doanh-nghiep--66801
+
+Published Time: 2014-12-21T17:00:00.000Z
+
+Markdown Content:
+![Image 2](https://cmp.biznext.vn/api/v1/dms/files/01a06a92-8834-7304-961b-b3860594d2b5/download?tenantId=019fc5b5-5b58-7195-8719-a0c531e970ee)
+## Tùy chọn
+
+×
+
+Cài đặt Chính sách bảo mật Khai báo Cookies
+
+Để tiếp tục sử dụng trang web, bạn cần chọn các tùy chọn của mình và nhấp vào nút 'Lưu'. Bạn có thể tìm hiểu thêm thông tin chi tiết trong Chính sách Bảo mật. Chúng tôi sẽ ghi nhận sự đồng ý của bạn; bạn có thể thay đổi lựa chọn này bất kỳ lúc nào bằng cách truy cập Thiết lập cookies.
+
+Cookies cần thiết
+
+Chúng tôi sử dụng các plugin để đảm bảo tính bảo mật, sự ổn định và hiệu suất của trang web này. Các công cụ này rất cần thiết để chúng tôi có thể cung cấp trang web này cho bạn.
+
+Chi tiết
+
+Luôn bật
+
+Necessary
+
+Luôn bật Xem cookie (1)
+
+| Tên cookie | Tên miền | Hết hạn | Mô tả |
+| --- | --- | --- | --- |
+| rc::a | google.com | Phiên | This cookie is set by the Google recaptcha service to identify bots to protect the website against malicious spam attacks. |
+
+Mạng xã hội
+
+Các tệp dữ liệu nhỏ do các nền tảng như Facebook, Instagram, LinkedIn hoặc X (Twitter)... thiết lập khi được tích hợp vào các trang web khác.
+
+Chi tiết
+
+- [x]  
+
+Meta Pixel
+
+- [x]  Xem cookie (1)
+
+| Tên cookie | Tên miền | Hết hạn | Mô tả |
+| --- | --- | --- | --- |
+| fr | .facebook.com | 3 tháng | Cookie của Facebook chứa mã định danh trình duyệt và người dùng, dùng để phân phối và đo hiệu quả quảng cáo. |
+
+Cookies tùy chọn
+
+Các loại cookies tùy chọn sử dụng cho các hoạt động khác trên website
+
+Chi tiết
+
+- [x]  
+
+vbpl.vn
+
+- [x]  Xem cookie (4)
+
+| Tên cookie | Tên miền | Hết hạn | Mô tả |
+| --- | --- | --- | --- |
+| 37f22820b6fab4d41805184915a9b1ab | vbpl.vn | Phiên | Cookie của website |
+| FECAS | vbpl.vn | Phiên | Cookie của website |
+| FECW | vbpl.vn | Phiên | Cookie của website |
+| FECWS | vbpl.vn | Phiên | Cookie của website |
+
+cookies-quảng-cáo,-phân-tích-dữ-liệu-bên-thứ-ba
+
+Chi tiết
+
+- [x]  
+
+Google Analytics
+
+- [x]  Xem cookie (1)
+
+| Tên cookie | Tên miền | Hết hạn | Mô tả |
+| --- | --- | --- | --- |
+| _ga | .vbpl.vn | 2 năm | Registers a unique ID to generate statistical data on website usage |
+
+Google Analytics 4
+
+- [x]  Xem cookie (1)
+
+| Tên cookie | Tên miền | Hết hạn | Mô tả |
+| --- | --- | --- | --- |
+| _ga_T8D8L4C5V9 | .vbpl.vn | 2 năm | Google Analytics 4 measurement ID — persists session state |
+
+## CHÍNH SÁCH BẢO VỆ DỮ LIỆU CÁ NHÂN
+
+Chính sách bảo vệ Dữ liệu cá nhân (“**Chính sách**”) này được thực hiện bởi Bộ Tư pháp - VBPL ("Chúng tôi"), mô tả các hoạt động liên quan đến việc Xử lý Dữ liệu cá nhân của Khách hàng để Khách hàng hiểu rõ hơn về mục đích, phạm vi thông tin mà Công ty xử lý, các biện pháp Công ty áp dụng để bảo vệ thông tin và quyền của Quý Khách hàng đối với các hoạt động này.
+
+Chính sách này có hiệu lực từ ngày: 2026-06-01
+
+## Đối tượng và phạm vi áp dụng
+
+Chính sách này giải thích cách Chúng tôi thu thập, sử dụng, lưu trữ, chia sẻ và bảo vệ dữ liệu cá nhân của Khách hàng khi truy cập, đăng ký hoặc sử dụng website và các dịch vụ liên quan trong lĩnh vực hoạt động của Chúng tôi.
+
+Chính sách được xây dựng trên cơ sở **Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 ngày 26/6/2025** cùng các quy định pháp luật khác có liên quan của Việt Nam.
+
+Chính sách này áp dụng cho mọi chủ thể dữ liệu là cá nhân có dữ liệu được Chúng tôi xử lý, bao gồm khách hàng, khách truy cập website, người đăng ký nhận thông tin, ứng viên tuyển dụng hoặc đối tác là cá nhân.
+
+Khách hàng vui lòng đọc kỹ Chính sách này trước khi cung cấp dữ liệu cá nhân. Nếu Khách hàng không đồng ý với bất kỳ nội dung nào, Khách hàng có quyền không cung cấp dữ liệu hoặc rút lại sự đồng ý cung cấp dữ liệu.
+
+Việc sử dụng cookie và các công nghệ tương tự trên website của Chúng tôi được quy định chi tiết tại Chính sách Cookie. Chính sách Cookie là một phần không tách rời của Chính sách này.
+
+## Mục đích thu thập, xử lý Dữ liệu cá nhân
+
+Chúng tôi xử lý dữ liệu cá nhân cho từng mục đích cụ thể dưới đây. Khách hàng được lựa chọn đồng ý riêng cho từng mục đích; việc từ chối một mục đích không ảnh hưởng tới các mục đích khác. Với mỗi mục đích, phần dưới đây nêu dữ liệu sử dụng và ghi chú về sự đồng ý:
+
+Chúng tôi không xử lý dữ liệu cá nhân của Khách hàng cho mục đích khác với mục đích đã thông báo. Khi phát sinh mục đích mới, Chúng tôi sẽ thông báo và xin sự đồng ý của Khách hàng cho mục đích đó trước khi thực hiện.
+
+## Các loại dữ liệu cá nhân được thu thập, xử lý
+
+Để có thể cung cấp các sản phẩm, dịch vụ cho Khách hàng và/hoặc xử lý các yêu cầu của Khách hàng, chúng tôi được quyền thu thập hoặc đề nghị thu thập các loại Dữ liệu cá nhân sau đây, tùy thuộc vào loại sản phẩm hoặc dịch vụ, cách thức tương tác của Khách hàng với chúng tôi:
+
+**Dữ liệu cá nhân cơ bản:**
+
+*   Họ, chữ đệm và tên khai sinh, tên gọi khác (nếu có)
+
+*   Ngày, tháng, năm sinh; ngày, tháng, năm chết hoặc mất tích
+
+*   Giới tính
+
+*   Nơi sinh, nơi đăng ký khai sinh, nơi đăng ký thường trú, nơi đăng ký tạm trú, nơi ở hiện tại, quê quán, địa chỉ liên hệ
+
+*   Quốc tịch
+
+*   Hình ảnh của cá nhân
+
+*   Số điện thoại, số định danh cá nhân, số hộ chiếu, số giấy phép lái xe, số biển số xe
+
+*   Tình trạng hôn nhân
+
+*   Thông tin về mối quan hệ gia đình (cha mẹ, con, vợ, chồng)
+
+*   Thông tin về tài khoản số của cá nhân
+
+*   Các thông tin khác gắn liền với một con người cụ thể hoặc giúp xác định một con người cụ thể, không thuộc danh mục dữ liệu nhạy cảm
+
+**Dữ liệu cá nhân nhạy cảm:**
+
+*   Dữ liệu tiết lộ nguồn gốc chủng tộc, nguồn gốc dân tộc
+
+*   Quan điểm về chính trị, tôn giáo, tín ngưỡng
+
+*   Thông tin về đời sống riêng tư, bí mật cá nhân, bí mật gia đình
+
+*   Tình trạng sức khỏe
+
+*   Dữ liệu sinh trắc học, đặc điểm di truyền
+
+*   Dữ liệu tiết lộ đời sống tình dục, xu hướng tình dục của cá nhân
+
+*   Dữ liệu về tội phạm, vi phạm pháp luật được thu thập, lưu trữ bởi các cơ quan thực thi pháp luật
+
+*   Vị trí của cá nhân được xác định qua dịch vụ định vị
+
+*   Tên đăng nhập và mật khẩu truy cập tài khoản định danh điện tử; hình ảnh thẻ căn cước/CCCD/CMND
+
+*   Tên đăng nhập, mật khẩu tài khoản ngân hàng; thông tin thẻ ngân hàng, lịch sử giao dịch ngân hàng; thông tin tài chính, tín dụng, giao dịch chứng khoán, bảo hiểm tại các tổ chức tín dụng/trung gian thanh toán/chứng khoán/bảo hiểm
+
+*   Dữ liệu theo dõi hành vi, hoạt động sử dụng dịch vụ viễn thông, mạng xã hội, truyền thông trực tuyến và các dịch vụ khác trên không gian mạng
+
+*   Dữ liệu cá nhân khác pháp luật quy định cần giữ bí mật hoặc cần biện pháp bảo mật chặt chẽ
+
+Chúng tôi chỉ thu thập dữ liệu ở mức cần thiết cho các mục đích đã nêu tại "Mục đích thu thập, xử lý Dữ liệu cá nhân". Khách hàng có thể lựa chọn không cung cấp một số dữ liệu; trong trường hợp đó, Chúng tôi có thể không thực hiện được một phần hoặc toàn bộ dịch vụ liên quan và sẽ thông báo rõ cho Khách hàng.
+
+## Dữ liệu cá nhân của trẻ em và người được đại diện
+
+Dịch vụ của Chúng tôi  người dưới 16 tuổi.
+
+Đối với trẻ em, người bị mất hoặc hạn chế năng lực hành vi dân sự và người có khó khăn trong nhận thức, làm chủ hành vi, việc thực hiện quyền của chủ thể dữ liệu được thực hiện thông qua người đại diện theo pháp luật, trừ trường hợp pháp luật có quy định khác.
+
+Đối với trẻ em từ đủ 07 tuổi trở lên, việc xử lý dữ liệu cá nhân của trẻ em nhằm mục đích công khai phải có sự đồng ý của cả trẻ em và người đại diện theo pháp luật của trẻ em.
+
+Chúng tôi không thực hiện quảng cáo hướng theo hành vi nhắm tới người dùng được xác định là trẻ em.
+
+Nếu phát hiện đã thu thập dữ liệu của trẻ em mà chưa có sự đồng ý hợp lệ, Chúng tôi sẽ ngừng xử lý và xóa dữ liệu đó. Người đại diện theo pháp luật có thể liên hệ với Chúng tôi để yêu cầu.
+
+## Tiếp thị và quảng cáo
+
+Chúng tôi chỉ gửi thông tin tiếp thị, khuyến mại và chỉ thực hiện quảng cáo hướng theo hành vi khi Quý khách đã đồng ý cho mục đích tương ứng.
+
+Khi xin sự đồng ý cho mục đích tiếp thị, Chúng tôi thông báo rõ nội dung và tần suất thông tin mà Quý khách sẽ nhận.
+
+Quý khách có thể từ chối nhận thông tin quảng cáo bất cứ lúc nào thông qua đường dẫn từ chối trong mỗi thông điệp, thiết lập trong tài khoản, hoặc liên hệ với Chung tôi. Chúng tôi tôn trọng và cập nhật danh sách từ chối của Quý khách.
+
+Chúng tôi chỉ sử dụng dữ liệu do Quý khách cung cấp cho Chúng tôi hoặc do Chúng tôi thu thập hợp pháp cho hoạt động tiếp thị; Chúng tôi không sử dụng dữ liệu cá nhân có nguồn gốc không hợp pháp.
+
+## Sự đồng ý và rút lại sự đồng ý thu thập, xử lý dữ liệu cá nhân
+
+Sự đồng ý thu thập, xử lý dữ liệu cá nhân của Quý khách chỉ có giá trị khi được đưa ra tự nguyện và khi Quý khách biết rõ loại dữ liệu, mục đích thu thập và xử lý. Chúng tôi xin sự đồng ý riêng cho từng mục đích và không đặt trạng thái đồng ý mặc định cho các mục đích không thiết yếu; sự im lặng hoặc không phản hồi không được coi là sự đồng ý.
+
+Quý khách có quyền rút lại sự đồng ý bất cứ lúc nào bằng cách gửi thông tin yêu cầu tại biểu mẫu “Yêu cầu dữ liệu” hoặc liên hệ với Chúng tôi.
+
+Việc rút lại không làm mất hiệu lực của các hoạt động xử lý đã thực hiện hợp pháp trước đó và không làm suy giảm chất lượng dịch vụ đối với các mục đích không thiết yếu.
+
+## Chia sẻ dữ liệu với bên thứ ba
+
+Chúng tôi không mua, bán, trao đổi dữ liệu cá nhân của Quý khách. Chúng tôi có thể chia sẻ dữ liệu trong phạm vi cần thiết với: nhà cung cấp hạ tầng công nghệ; nhà cung cấp dịch vụ thanh toán, vận chuyển; nhà cung cấp công cụ đo lường, phân tích (chỉ khi Quý khách đồng ý); đối tác quảng cáo, tiếp thị (chỉ khi Quý khách đồng ý); đơn vị tư vấn, kiểm toán, pháp lý; và cơ quan nhà nước có thẩm quyền theo yêu cầu hợp pháp bằng văn bản.
+
+Với mỗi bên xử lý dữ liệu thay mặt Chúng tôi, Chúng tôi ký hợp đồng xác định rõ phạm vi, mục đích xử lý, nghĩa vụ bảo mật và trách nhiệm bảo vệ dữ liệu, đồng thời giám sát việc tuân thủ.
+
+## Chuyển dữ liệu cá nhân xuyên biên giới
+
+Nhằm thực hiện mục đích thu thập, xử lý dữ liệu cá nhân tại Chính sách này, chúng tôi có thể phải cung cấp/chia sẻ dữ liệu cá nhân của Quý khách đến các Bên thứ ba liên quan và các Bên thứ ba này có thể ở tại Việt Nam hoặc bất cứ địa điểm nào khác nằm ngoài lãnh thổ Việt Nam.
+
+Khi thực hiện việc cung cấp/chia sẻ Dữ liệu cá nhân ra nước ngoài, chúng tôi sẽ yêu cầu bên tiếp nhận đảm bảo rằng Dữ liệu cá nhân của Quý khách được chuyển giao cho họ sẽ bảo mật và an toàn. Chúng tôi đảm bảo tuân thủ các nghĩa vụ pháp lý và quy định liên quan đến việc chuyển giao Dữ liệu cá nhân của Quý khách.
+
+## Biện pháp bảo vệ dữ liệu cá nhân
+
+Chúng tôi áp dụng các biện pháp quản lý và kỹ thuật phù hợp để bảo vệ dữ liệu cá nhân, bao gồm:
+
+*   Mã hóa đường truyền cho toàn bộ website và ứng dụng;
+
+*   Kiểm soát truy cập theo vai trò, cấp quyền ở mức tối thiểu cần thiết;
+
+*   Ghi nhật ký truy cập và thao tác đối với dữ liệu cá nhân;
+
+*   Sao lưu, khôi phục dữ liệu và kiểm thử định kỳ;
+
+*   Rà soát an toàn thông tin và đánh giá rủi ro theo định kỳ;
+
+*   Ràng buộc nghĩa vụ bảo mật đối với nhân sự và các bên xử lý dữ liệu;
+
+*   Đào tạo nhận thức về bảo vệ dữ liệu cá nhân cho nhân sự có liên quan.
+
+Chúng tôi thực hiện đánh giá tác động xử lý dữ liệu cá nhân, lập và lưu hồ sơ đánh giá tác động theo quy định pháp luật, và cập nhật khi hoạt động xử lý dữ liệu thay đổi.
+
+## Thời hạn lưu trữ dữ liệu cá nhân
+
+Chúng tôi chỉ lưu trữ dữ liệu cá nhân trong thời gian cần thiết để đạt được mục đích đã thông báo hoặc theo thời hạn pháp luật yêu cầu (ví dụ nghĩa vụ về kế toán, thuế đối với dữ liệu giao dịch), hoặc cho tới khi Quý khách rút lại sự đồng ý. Hết thời hạn, Chúng tôi xóa, hủy hoặc ẩn danh hóa dữ liệu theo quy trình nội bộ, trừ trường hợp pháp luật có quy định khác.
+
+## Quyền lợi của Quý khách và cách thực hiện
+
+Với tư cách chủ thể dữ liệu, Quý khách có các quyền sau:
+
+*   Quyền được biết về hoạt động xử lý dữ liệu cá nhân của mình;
+
+*   Quyền đồng ý hoặc không đồng ý cho phép xử lý dữ liệu cá nhân của mình;
+
+*   Quyền rút lại sự đồng ý đã đưa ra trước đó;
+
+*   Quyền truy cập, xem dữ liệu cá nhân của mình;
+
+*   Quyền chỉnh sửa hoặc yêu cầu chỉnh sửa dữ liệu cá nhân của mình;
+
+*   Quyền yêu cầu cung cấp dữ liệu cá nhân của mình;
+
+*   Quyền yêu cầu xóa dữ liệu cá nhân của mình;
+
+*   Quyền yêu cầu hạn chế xử lý dữ liệu cá nhân của mình;
+
+*   Quyền phản đối việc xử lý dữ liệu cá nhân của mình;
+
+*   Quyền khiếu nại, tố cáo, khởi kiện theo quy định pháp luật;
+
+*   Quyền yêu cầu bồi thường thiệt hại khi có hành vi vi phạm quy định về bảo vệ dữ liệu cá nhân gây thiệt hại cho Quý khách;
+
+*   Quyền tự bảo vệ hoặc yêu cầu cơ quan, tổ chức có thẩm quyền thực hiện các biện pháp bảo vệ dữ liệu cá nhân của mình.
+
+Quý khách có quyền rút lại sự đồng ý bất cứ lúc nào bằng cách gửi thông tin yêu cầu tại biểu mẫu “Yêu cầu dữ liệu” hoặc liên hệ với Chúng tôi. Chúng tôi có thể đề nghị Quý khách cung cấp thông tin tối thiểu để xác minh danh tính trước khi xử lý.
+
+Thời hạn xử lý: Chúng tôi phản hồi trong 02 ngày làm việc kể từ ngày nhận được yêu cầu.
+
+Sau đó, việc xem/chỉnh sửa/cung cấp dữ liệu được thực hiện trong 10 ngày; việc rút lại sự đồng ý, hạn chế xử lý, phản đối xử lý, áp dụng biện pháp bảo vệ dữ liệu trong 15 ngày; việc xóa dữ liệu trong 20 ngày. Mỗi mốc có thể được gia hạn thêm tối đa bằng chính thời hạn đó, kèm thông báo lý do. Chúng tôi không thu phí đối với yêu cầu thông thường.
+
+## Xử lý sự cố và thông báo vi phạm
+
+Khi phát hiện hành vi vi phạm quy định bảo vệ dữ liệu cá nhân hoặc sự cố làm lộ, mất dữ liệu, Chúng tôi triển khai ngay các biện pháp khắc phục và hạn chế thiệt hại.
+
+Chúng tôi thông báo cho cơ quan chuyên trách bảo vệ dữ liệu cá nhân trong thời hạn 72 giờ kể từ khi phát hiện, theo quy định của pháp luật.
+
+Trong trường hợp sự cố liên quan tới dữ liệu cá nhân nhạy cảm, Chúng tôi thông báo cho chủ thể dữ liệu bị ảnh hưởng, nêu tối thiểu: thời điểm phát hiện, loại dữ liệu bị ảnh hưởng, mức độ rủi ro, biện pháp khắc phục đã và đang thực hiện, cùng đầu mối liên hệ của bộ phận bảo vệ dữ liệu.
+
+Chúng tôi lưu hồ sơ về sự cố và quá trình xử lý tối thiểu 05 năm kể từ ngày khắc phục xong sự cố.
+
+## Bộ phận bảo vệ dữ liệu cá nhân
+
+Chúng tôi bố trí [Bộ phận bảo vệ dữ liệu cá nhân] làm đầu mối về bảo vệ dữ liệu cá nhân, chịu trách nhiệm tiếp nhận và xử lý yêu cầu của chủ thể dữ liệu, giám sát tuân thủ nội bộ và làm việc với cơ quan chuyên trách.
+
+Mọi thắc mắc liên quan tới Chính sách này hoặc tới việc xử lý dữ liệu cá nhân, Quý khách vui lòng liên hệ: [Bộ phận bảo vệ dữ liệu cá nhân]
+
+## Khiếu nại và giải quyết tranh chấp
+
+Quý khách có thể gửi khiếu nại về hoạt động xử lý dữ liệu cá nhân tới hoặc gửi yêu cầu tại biểu mẫu "Yêu cầu dữ liệu". Chúng tôi tiếp nhận, xác minh và phản hồi theo thời hạn nêu tại Mục "Quyền lợi của Quý khách và cách thực hiện".
+
+Trường hợp không đồng ý với kết quả giải quyết, Quý khách có quyền khiếu nại, tố cáo tới cơ quan nhà nước có thẩm quyền, khởi kiện hoặc yêu cầu bồi thường thiệt hại theo quy định của pháp luật.
+
+## Thay đổi Chính sách
+
+Chúng tôi có thể cập nhật Chính sách này để phù hợp với thay đổi của pháp luật hoặc của hoạt động xử lý dữ liệu. Mỗi phiên bản đều ghi rõ số ngày bắt đầu có hiệu lực.
+
+Khi thay đổi liên quan tới mục đích xử lý mới hoặc phạm vi dữ liệu mới, Chúng tôi sẽ thông báo tới Quý khách và xin lại sự đồng ý cho nội dung mới trước khi thực hiện.
+
+## Điều khoản chung
+
+Kể từ ngày chinh sách này có hiệu lực, Quý khách hiểu và đồng ý rằng, Chính sách này có thể được sửa đổi theo từng thời kỳ và được thông báo tới Quý khách thông qua các kênh giao dịch của Chúng tôi trước khi áp dụng. Những thay đổi và thời điểm có hiệu lực sẽ được cập nhật và công bố tại các kênh giao dịch và các kênh khác của chúng tôi.
+
+Quý khách hiểu và chấp nhận rằng việc không đồng ý hoặc rút lại sự đồng ý về việc thực hiện hoạt động Xử lý Dữ liệu cá nhân cho bất kỳ mục đích nào theo bản Chính sách này hoặc thông báo của chúng tôi tại từng thời kỳ sẽ có khả năng hạn chế hoặc giới hạn chúng tôi và bên thứ ba (nếu có) cung cấp các dịch vụ, sản phẩm cho Quý khách.
+
+Các bên cam kết thực hiện nghiêm túc các quy định tại Chính sách này. Các vấn đề chưa được quy định, các Bên thống nhất thực hiện theo quy định của pháp luật, hướng dẫn của cơ quan Nhà nước có thẩm quyền và/hoặc các sửa đổi, bổ sung Chính sách này được chúng tôi thông báo cho Quý khách trong từng thời kỳ.
+
+Quý khách có thể thấy quảng cáo hoặc nội dung khác trên bất kỳ trang tin điện tử, ứng dụng hoặc thiết bị nào có thể liên kết đến các trang tin điện tử hoặc dịch vụ của các đối tác, nhà quảng cáo, nhà tài trợ hoặc các Bên thứ ba khác. Chúng tôi không kiểm soát nội dung hoặc các liên kết xuất hiện trên các trang tin điện tử hoặc dịch vụ của Bên thứ ba và không chịu trách nhiệm hoặc/và trách nhiệm pháp lý đối với các hoạt động được sử dụng bởi các trang tin điện tử hoặc dịch vụ của Bên thứ ba được liên kết đến hoặc từ bất kỳ trang tin điện tử, ứng dụng hoặc thiết bị nào. Các trang tin điện tử và dịch vụ này có thể tuân theo các chính sách bảo mật và điều khoản sử dụng của riêng của Bên thứ ba.
+
+Chính sách này được giao kết trên cơ sở thiện chí giữa Chúng tôi và Quý khách. Trong quá trình thực hiện nếu phát sinh tranh chấp, các Bên sẽ chủ động giải quyết thông qua thương lượng, hòa giải. Trường hợp hòa giải không thành, tranh chấp sẽ được đưa ra Tòa án nhân dân có thẩm quyền để giải quyết theo quy định của pháp luật.
+
+Quý khách đã đọc kỹ, hiểu rõ các quyền và nghĩa vụ và đồng ý với toàn bộ nội dung của bản Chính sách này./.
+
+## Thông tin liên hệ
+
+Mọi yêu cầu, câu hỏi hoặc khiếu nại liên quan tới dữ liệu cá nhân, Quý khách vui lòng liên hệ:
+
+Bộ Tư pháp - VBPL
+
+Địa chỉ:
+
+Đầu mối Bộ phận bảo vệ dữ liệu cá nhân: Bộ Tư pháp - VBPL
+
+Số điện thoại:
+
+Email:
+
+## Thay đổi đối với Chính sách Cookie này
+
+Chúng tôi có thể cập nhật Chính sách Cookie này theo thời gian để phản ánh các thay đổi về pháp lý, kỹ thuật hoặc vận hành. Mọi cập nhật sẽ được công bố trên trang này và có hiệu lực từ ngày sửa đổi nếu được áp dụng.
+
+## Cookie cần thiết
+
+Cookie cần thiết là các cookie bắt buộc để website hoạt động đúng cách. Chúng hỗ trợ các chức năng cốt lõi như bảo mật, quản lý phiên, khả năng truy cập và quản lý mạng, và không thể bị tắt trong hệ thống của chúng tôi.
+
+## Tuyên bố về Cookie
+
+Website và các sản phẩm của chúng tôi sử dụng cookie. Cookie là các tệp văn bản nhỏ được lưu trên thiết bị của bạn nhằm cải thiện trải nghiệm duyệt web, ghi nhớ tùy chọn, phân tích lưu lượng truy cập, hỗ trợ các chức năng thiết yếu và cá nhân hóa nội dung cũng như quảng cáo.
+
+## Cookie quảng cáo, phân tích dữ liệu bên thứ ba
+
+Cookie phân tích giúp chúng tôi hiểu cách khách truy cập tương tác với website bằng cách thu thập thông tin ở dạng tổng hợp hoặc ẩn danh. Điều này giúp chúng tôi cải thiện khả năng sử dụng, hiệu suất và chất lượng nội dung. Cookie quảng cáo được sử dụng để hiển thị quảng cáo phù hợp, đo lường hiệu quả chiến dịch và giới hạn số lần bạn nhìn thấy cùng một quảng cáo. Chúng có thể được thiết lập bởi chúng tôi hoặc bởi các đối tác quảng cáo bên thứ ba.
+
+## Cookie mạng xã hội
+
+Cookie mạng xã hội được thiết lập bởi các dịch vụ mạng xã hội tích hợp trên website. Chúng cho phép bạn chia sẻ nội dung và có thể theo dõi hoạt động của bạn trên nhiều website để xây dựng hồ sơ về sở thích.
+
+## Trạng thái đồng ý
+
+Bạn có thể quản lý tùy chọn cookie của mình bất kỳ lúc nào thông qua giao diện quản lý đồng ý của chúng tôi. Các lựa chọn của bạn sẽ được lưu lại và áp dụng theo các nhóm cookie mà bạn chấp nhận hoặc từ chối.
+
+## Xóa hoặc vô hiệu hóa cookie
+
+Hầu hết các trình duyệt cho phép bạn xóa, chặn hoặc quản lý cookie thông qua phần cài đặt trình duyệt. Lưu ý rằng việc vô hiệu hóa một số cookie có thể ảnh hưởng đến chức năng, tính sẵn sàng hoặc hiệu suất của một số phần trên website.
+
+Lưu Hủy Đóng Cho phép tất cả Từ chối
+
+![Image 3](https://cmp.biznext.vn/api/v1/dms/files/01a06a92-8834-7304-961b-b3860594d2b5/download?tenantId=019fc5b5-5b58-7195-8719-a0c531e970ee)
+
+Tuân theo Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15, Bộ Tư pháp sử dụng cookie cần thiết để vận hành hệ thống Cơ sở dữ liệu quốc gia về pháp luật. Nếu bạn đồng ý, chúng tôi sẽ sử dụng thêm cookie đo lường để cải thiện chất lượng phục vụ. Vui lòng chọn cách sử dụng phù hợp với bạn.
+
+Đồng ý Từ chối Tùy chỉnh
+
+![Image 4: CƠ SỞ DỮ LIỆU QUỐC GIA VỀ PHÁP LUẬT](https://vbpl.vn/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fquochuyfooter.ef1175b1.png&w=256&q=75)
+
+CƠ SỞ DỮ LIỆU QUỐC GIA VỀ PHÁP LUẬT
+
+Đơn vị chủ quản:
+
+Bộ Tư pháp
+
+Điện thoại:024.6273.9468 |
+
+Fax:024.6273.9359
+
+Địa chỉ:
+
+Số 60 Trần Phú - Ba Đình - Thành phố Hà Nội

@@ -2062,3 +2062,105 @@ body.cloze-active .revealed-cloze {
     display: none;
   }
 }
+
+
+/* Phần / Mục / Tiểu mục */
+.part-header {
+  margin: 1.3rem 0 0.5rem;
+  padding: 0.55rem 0.9rem;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.35), rgba(99, 102, 241, 0.05));
+  border-radius: var(--radius-sm);
+}
+.section-header {
+  margin: 0.8rem 0 0.45rem;
+  padding: 0.35rem 0.8rem;
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: #a5b4fc;
+  border-left: 3px solid #818cf8;
+}
+.subsection-header {
+  margin: 0.5rem 0 0.4rem 0.9rem;
+  padding: 0.25rem 0.7rem;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: #c7d2fe;
+  border-left: 2px dashed #818cf8;
+}
+.reader-part-title {
+  font-weight: 800;
+  color: #fbbf24;
+  text-transform: uppercase;
+  font-size: 1rem;
+  margin: 1.2rem 0 0.6rem;
+}
+.reader-paper .section-header { color: #7dd3fc; border-left-color: #38bdf8; }
+.reader-paper .subsection-header { color: #bae6fd; border-left-color: #38bdf8; }
+
+
+/* Chú thích thuật ngữ ở cuối trang (tab Học luật) */
+.glossary-panel {
+  position: sticky;
+  bottom: 0;
+  z-index: 40;
+  margin-top: 1rem;
+  padding: 0.7rem 0.95rem;
+  max-height: 38vh;
+  overflow-y: auto;
+  background: rgba(15, 23, 42, 0.97);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 102, 241, 0.45);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+}
+.glossary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.45rem;
+  font-size: 0.86rem;
+  color: #e0e7ff;
+}
+.glossary-item {
+  padding: 0.4rem 0;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  border-bottom: 1px dashed rgba(148, 163, 184, 0.2);
+}
+.glossary-item strong { color: #fff; }
+.glossary-src {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.45rem;
+  font-size: 0.68rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--text-muted);
+}
+.glossary-src.own {
+  background: rgba(16, 185, 129, 0.18);
+  color: #6ee7b7;
+}
+.glossary-empty,
+.glossary-foot {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  padding-top: 0.35rem;
+}
+.article-card.glossary-active {
+  outline: 1px solid rgba(99, 102, 241, 0.65);
+}
+@media (max-width: 960px) {
+  .glossary-panel {
+    bottom: calc(3.9rem + env(safe-area-inset-bottom));
+    max-height: 34vh;
+  }
+}

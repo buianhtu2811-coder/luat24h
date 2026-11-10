@@ -259,94 +259,190 @@ function activateStudyLaw(docId, switchToStudyTab = false) {
 
 // ==========================================
 // 1. BỘ PHÂN TÍCH & TÁCH LUẬT TỰ ĐỘNG
+//    Thứ bậc chuẩn: Phần > Chương > Mục > Tiểu mục > Điều > Khoản > Điểm
 // ==========================================
-function parseVietnameseLaw(rawText, meta = {}) {
-  const cleanText = rawText
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n')
-    .replace(/\u00A0/g, ' ')
-    .trim();
+const LAW_POINT_ORDER = 'abcdđeghiklmnopqrstuvxy';
 
-  const lines = cleanText.split('\n').map(l => l.trim()).filter(Boolean);
+// Chuẩn hóa văn bản thô (Unicode NFC, ký tự ẩn, tab, "Ðiều" -> "Điều"...)
+function normalizeLawText(raw) {
+  return String(raw || '')
+    .normalize('NFC')
+    .replace(/[\uFEFF\u200B-\u200D\u2060\u00AD]/g, '')
+    .replace(/\r\n?/g, '\n')
+    .replace(/[\u00A0\u2007\u202F\t]/g, ' ')
+    .replace(/Ð/g, 'Đ')
+    .replace(/ð/g, 'đ')
+    .trim();
+}
+
+// Điểm kế tiếp hợp lệ: a→b→c→d→đ→e... (chấp nhận cả văn bản bỏ đ hoặc dùng f)
+function isNextLawPoint(lastLetter, letter) {
+  if (!lastLetter) return letter === 'a';
+  const li = LAW_POINT_ORDER.indexOf(lastLetter);
+  const ni = LAW_POINT_ORDER.indexOf(letter);
+  if (li >= 0 && ni === li + 1) return true;
+  if (lastLetter === 'd' && letter === 'e') return true;
+  return String.fromCharCode(lastLetter.charCodeAt(0) + 1) === letter;
+}
+
+function parseVietnameseLaw(rawText, meta = {}) {
+  // ---- 1. Làm sạch & chia dòng ----
+  const lines = [];
+  normalizeLawText(rawText).split('\n').forEach(l => {
+    const s = l
+      .replace(/^#{1,6}\s+/, '')
+      .replace(/\*\*/g, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+    if (!s) return;
+    if (/^[-–—\s]*\d{1,4}[-–—\s]*$/.test(s)) return;      // số trang: "12", "- 3 -"
+    if (/^Trang\s+\d+(\s*\/\s*\d+)?$/i.test(s)) return;   // "Trang 3/10"
+    lines.push(s);
+  });
+
+  // ---- 2. Các mẫu nhận diện (phân biệt chữ Điều / Chương... đúng cách) ----
+  const SEP = '(?:\\s*[:.\\-–—]\\s*|\\s+|$)';
+  const partRegex = new RegExp(`^(?:PHẦN|Phần)\\s+((?:THỨ|Thứ)\\s+\\p{L}+|[IVXLCDM]+|\\d+)${SEP}(.*)$`, 'u');
+  const chapterRegex = new RegExp(`^(?:CHƯƠNG|Chương)\\s+([IVXLCDM]+|\\d+)${SEP}(.*)$`, 'u');
+  const subsectionRegex = new RegExp(`^(?:TIỂU MỤC|Tiểu mục)\\s+([IVXLCDM]+|\\d+)${SEP}(.*)$`, 'u');
+  const sectionRegex = new RegExp(`^(?:MỤC|Mục)\\s+([IVXLCDM]+|\\d+)${SEP}(.*)$`, 'u');
+  const articleRegex = /^Điều\s+(\d+[a-zđ]?)(?:\s*[.:–—-]\s*(.*))?$/u;   // "Điều 5. Tên" | "Điều 5" (tên ở dòng sau)
+  const clauseRegex = /^(\d{1,3})\.(?:\s+(.*))?$/u;                      // "1. ..." (không nhầm "1.5 triệu")
+  const pointRegex = /^([a-zđ])\)(?:\s+(.*))?$/u;                        // "a) ..." "đ) ..."
+
+  const isStructural = s =>
+    partRegex.test(s) || chapterRegex.test(s) || subsectionRegex.test(s) ||
+    sectionRegex.test(s) || articleRegex.test(s) || clauseRegex.test(s) || pointRegex.test(s);
+
+  const cleanTitle = t => (t || '').trim().replace(/[.\s]+$/, '');
+  const joinText = (a, b) => (a ? `${a}\n${b}` : b);   // giữ nguyên xuống dòng của bản gốc
+  const lawKey = (meta.code || 'law').replace(/[^a-zA-Z0-9]/g, '_');
+
+  // Lấy tiêu đề: cùng dòng hoặc dòng kế tiếp (không phải dòng cấu trúc)
+  const takeTitle = (sameLine, i, allowMultiLine) => {
+    let title = cleanTitle(sameLine);
+    let skip = 0;
+    if (!title && i + 1 < lines.length && !isStructural(lines[i + 1])) {
+      title = cleanTitle(lines[i + 1]);
+      skip = 1;
+      // Tiêu đề Chương/Phần có thể xuống 2 dòng IN HOA
+      while (
+        allowMultiLine && i + 1 + skip < lines.length &&
+        !isStructural(lines[i + 1 + skip]) &&
+        lines[i + 1 + skip] === lines[i + 1 + skip].toUpperCase() &&
+        lines[i + 1 + skip].length < 100
+      ) {
+        title += ' ' + cleanTitle(lines[i + 1 + skip]);
+        skip++;
+      }
+    }
+    return { title, skip };
+  };
+
+  // ---- 3. Trạng thái ----
   const chapters = [];
   const allArticles = [];
+  const introLines = [];     // phần trước Điều đầu tiên (quốc hiệu, "Căn cứ...", ...)
+  const usedIds = {};
 
-  let currentChapter = {
-    id: 'chap-0',
-    code: 'Quy định chung',
-    title: '',
+  const newChapter = (code, title, partTitle) => ({
+    id: `chap-${chapters.length + 1}`,
+    code,
+    title,
+    partTitle: partTitle || '',
     articles: []
-  };
+  });
+
+  let currentPart = '';
+  let currentChapter = newChapter('Quy định chung', '', '');
+  currentChapter.id = 'chap-0';
   let currentSection = null;
+  let currentSubsection = null;
   let currentArticle = null;
   let currentClause = null;
+  let lastClauseNo = 0;
 
-  const chapterRegex = /^(PHẦN\s+(?:THỨ\s+[A-ZÀ-Ỹ]+|[IVXLCDM]+|\d+)|CHƯƠNG\s+(?:[IVXLCDM]+|\d+))(?:\s*[:.\-–]\s*(.*))?$/i;
-  const sectionRegex = /^(MỤC\s+\d+)(?:\s*[:.\-–]\s*(.*))?$/i;
-  const articleRegex = /^(Điều\s+\d+[a-z]?)\s*[.:–\-]?\s*(.*)$/i;
-  const clauseRegex = /^(\d+)\.\s+(.+)$/;
-  const pointRegex = /^([a-zđ])\)\s+(.+)$/i;
+  const flushChapter = () => {
+    if (currentChapter.articles.length > 0) chapters.push(currentChapter);
+  };
 
+  // ---- 4. Duyệt từng dòng ----
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    const chapMatch = line.match(chapterRegex);
-    if (chapMatch) {
-      let chapCode = chapMatch[1].toUpperCase();
-      let chapTitle = chapMatch[2] || '';
-      if (!chapTitle && i + 1 < lines.length) {
-        const nextLine = lines[i + 1];
-        if (
-          !articleRegex.test(nextLine) &&
-          !sectionRegex.test(nextLine) &&
-          !chapterRegex.test(nextLine) &&
-          nextLine === nextLine.toUpperCase()
-        ) {
-          chapTitle = nextLine;
-          i++;
-        }
-      }
-      if (currentChapter.articles.length > 0) chapters.push(currentChapter);
-      currentChapter = {
-        id: `chap-${chapters.length + 1}`,
-        code: chapCode,
-        title: chapTitle,
-        articles: []
-      };
-      currentSection = null;
-      currentArticle = null;
-      currentClause = null;
+    // PHẦN
+    let m = line.match(partRegex);
+    if (m) {
+      const code = `PHẦN ${m[1].toUpperCase()}`;
+      const { title, skip } = takeTitle(m[2], i, true);
+      i += skip;
+      currentPart = `${code}${title ? ': ' + title : ''}`;
+      flushChapter();
+      // Điều đứng thẳng dưới Phần (không có Chương) sẽ nằm trong khối Phần này
+      currentChapter = newChapter(code, title, '');
+      currentSection = null; currentSubsection = null;
+      currentArticle = null; currentClause = null; lastClauseNo = 0;
       continue;
     }
 
-    const secMatch = line.match(sectionRegex);
-    if (secMatch) {
-      let secCode = secMatch[1];
-      let secTitle = secMatch[2] || '';
-      if (!secTitle && i + 1 < lines.length) {
-        const nextLine = lines[i + 1];
-        if (!articleRegex.test(nextLine) && !chapterRegex.test(nextLine)) {
-          secTitle = nextLine;
-          i++;
-        }
-      }
-      currentSection = `${secCode}${secTitle ? ': ' + secTitle : ''}`;
+    // CHƯƠNG
+    m = line.match(chapterRegex);
+    if (m) {
+      const code = `CHƯƠNG ${m[1].toUpperCase()}`;
+      const { title, skip } = takeTitle(m[2], i, true);
+      i += skip;
+      flushChapter();
+      currentChapter = newChapter(code, title, currentPart);
+      currentSection = null; currentSubsection = null;
+      currentArticle = null; currentClause = null; lastClauseNo = 0;
       continue;
     }
 
-    const artMatch = line.match(articleRegex);
-    if (artMatch) {
-      const artCode = artMatch[1].trim();
-      const artTitle = artMatch[2].trim();
-      const artId = `${(meta.code || 'law').replace(/[^a-zA-Z0-9]/g, '_')}_${artCode.replace(/\s+/g, '_')}`;
+    // TIỂU MỤC (kiểm tra trước MỤC cho chắc chắn)
+    m = line.match(subsectionRegex);
+    if (m) {
+      const { title, skip } = takeTitle(m[2], i, false);
+      i += skip;
+      currentSubsection = `Tiểu mục ${m[1].toUpperCase()}${title ? ': ' + title : ''}`;
+      currentArticle = null; currentClause = null; lastClauseNo = 0;
+      continue;
+    }
+
+    // MỤC
+    m = line.match(sectionRegex);
+    if (m) {
+      const { title, skip } = takeTitle(m[2], i, false);
+      i += skip;
+      currentSection = `Mục ${m[1].toUpperCase()}${title ? ': ' + title : ''}`;
+      currentSubsection = null;                 // sang Mục mới thì hết Tiểu mục cũ
+      currentArticle = null; currentClause = null; lastClauseNo = 0;
+      continue;
+    }
+
+    // ĐIỀU
+    m = line.match(articleRegex);
+    if (m) {
+      const artCode = `Điều ${m[1]}`;
+      const { title, skip } = takeTitle(m[2], i, false);
+      i += skip;
+
+      let artId = `${lawKey}_${artCode.replace(/\s+/g, '_')}`;
+      if (usedIds[artId]) {                      // trùng số Điều (luật sửa đổi...) -> thêm hậu tố
+        usedIds[artId]++;
+        artId = `${artId}_${usedIds[artId]}`;
+      } else {
+        usedIds[artId] = 1;
+      }
 
       currentArticle = {
         id: artId,
         code: artCode,
-        title: artTitle || 'Quy định chi tiết',
+        title: title || 'Quy định chi tiết',
+        partTitle: currentChapter.partTitle || '',
         chapterCode: currentChapter.code,
         chapterTitle: currentChapter.title,
         sectionTitle: currentSection,
+        subsectionTitle: currentSubsection,
         preamble: [],
         clauses: [],
         rawLines: []
@@ -354,72 +450,78 @@ function parseVietnameseLaw(rawText, meta = {}) {
       currentChapter.articles.push(currentArticle);
       allArticles.push(currentArticle);
       currentClause = null;
+      lastClauseNo = 0;
       continue;
     }
 
+    // Dòng trước Điều đầu tiên: lưu riêng, KHÔNG tạo "Điều" giả
     if (!currentArticle) {
-      if (line.length > 25) {
-        currentArticle = {
-          id: `art_intro_${allArticles.length + 1}`,
-          code: `Điều ${allArticles.length + 1}`,
-          title: line.slice(0, 60),
-          chapterCode: currentChapter.code,
-          chapterTitle: currentChapter.title,
-          sectionTitle: currentSection,
-          preamble: [line],
-          clauses: [],
-          rawLines: [line]
-        };
-        currentChapter.articles.push(currentArticle);
-        allArticles.push(currentArticle);
-      }
+      introLines.push(line);
       continue;
     }
 
     currentArticle.rawLines.push(line);
 
-    const clauseMatch = line.match(clauseRegex);
-    if (clauseMatch) {
-      currentClause = {
-        number: clauseMatch[1],
-        text: clauseMatch[2],
-        points: []
-      };
+    // KHOẢN: chỉ nhận khi đúng số thứ tự kế tiếp (1,2,3...) -> tránh nhầm số trong câu
+    const cm = line.match(clauseRegex);
+    if (cm && parseInt(cm[1], 10) === lastClauseNo + 1) {
+      lastClauseNo = parseInt(cm[1], 10);
+      currentClause = { number: String(lastClauseNo), text: cm[2] || '', points: [], implicit: false };
       currentArticle.clauses.push(currentClause);
       continue;
     }
 
-    const pointMatch = line.match(pointRegex);
-    if (pointMatch) {
-      if (!currentClause) {
-        currentClause = {
-          number: '1',
-          text: currentArticle.preamble.join(' ') || 'Nội dung quy định:',
-          points: []
-        };
-        currentArticle.preamble = [];
-        currentArticle.clauses.push(currentClause);
+    // ĐIỂM: chỉ nhận khi đúng thứ tự a, b, c, d, đ...
+    const pm = line.match(pointRegex);
+    if (pm) {
+      const letter = pm[1];
+      const pts = currentClause ? currentClause.points : [];
+      const last = pts.length ? pts[pts.length - 1].letter : null;
+      if (isNextLawPoint(last, letter)) {
+        if (!currentClause) {
+          // Điều không chia Khoản mà chia thẳng Điểm: tạo khoản "ngầm", KHÔNG gán nhãn "Khoản 1" sai
+          currentClause = { number: '', text: '', points: [], implicit: true };
+          currentArticle.clauses.push(currentClause);
+        }
+        currentClause.points.push({ letter, text: pm[2] || '' });
+        continue;
       }
-      currentClause.points.push({
-        letter: pointMatch[1],
-        text: pointMatch[2]
-      });
-      continue;
     }
 
+    // Dòng nối tiếp (xuống dòng giữa câu)
     if (currentClause) {
       if (currentClause.points.length > 0) {
-        currentClause.points[currentClause.points.length - 1].text += ' ' + line;
+        const lp = currentClause.points[currentClause.points.length - 1];
+        lp.text = joinText(lp.text, line);
       } else {
-        currentClause.text += ' ' + line;
+        currentClause.text = joinText(currentClause.text, line);
       }
     } else {
       currentArticle.preamble.push(line);
     }
   }
 
-  if (currentChapter.articles.length > 0) {
-    chapters.push(currentChapter);
+  flushChapter();
+
+  // Văn bản không có "Điều" nào (văn bản thường): gom thành một mục nội dung
+  if (allArticles.length === 0 && introLines.length > 0) {
+    const art = {
+      id: 'art_intro_1',
+      code: 'Nội dung',
+      title: 'Nội dung văn bản',
+      partTitle: '',
+      chapterCode: 'Nội dung',
+      chapterTitle: '',
+      sectionTitle: null,
+      subsectionTitle: null,
+      preamble: introLines.slice(),
+      clauses: [],
+      rawLines: introLines.slice()
+    };
+    const ch = newChapter('Nội dung', '', '');
+    ch.articles.push(art);
+    chapters.push(ch);
+    allArticles.push(art);
   }
 
   allArticles.forEach(art => {
@@ -427,7 +529,7 @@ function parseVietnameseLaw(rawText, meta = {}) {
       art.title,
       ...art.preamble,
       ...art.clauses.map(c => `${c.text} ${c.points.map(p => p.text).join(' ')}`)
-    ].join(' ');
+    ].join(' ').replace(/\s*\n\s*/g, ' ');
     art.fullText = fullText;
     art.summaryChips = extractArticleHighlights(fullText, art);
   });
@@ -435,7 +537,7 @@ function parseVietnameseLaw(rawText, meta = {}) {
   let totalClauses = 0;
   let totalPoints = 0;
   allArticles.forEach(a => {
-    totalClauses += a.clauses.length;
+    totalClauses += a.clauses.filter(c => !c.implicit).length;
     a.clauses.forEach(c => (totalPoints += c.points.length));
   });
 
@@ -445,6 +547,7 @@ function parseVietnameseLaw(rawText, meta = {}) {
     agency: meta.agency || 'Cơ quan ban hành',
     effectiveDate: meta.effectiveDate || 'Đang có hiệu lực',
     category: meta.category || 'Pháp luật',
+    intro: introLines,
     chapters,
     articles: allArticles,
     stats: {
@@ -454,6 +557,42 @@ function parseVietnameseLaw(rawText, meta = {}) {
       points: totalPoints
     }
   };
+}
+
+// Nhãn Khoản (khoản "ngầm" không có số thì không in nhãn)
+function clauseLabel(c, suffix = '') {
+  return c.implicit ? '' : `Khoản ${escapeHtml(String(c.number))}${suffix}`;
+}
+
+// Dòng tiêu đề Phần/Mục/Tiểu mục chèn trước một Điều (so với Điều liền trước trong cùng Chương)
+function lawBreaksHtml(art, prev, esc = escapeHtml, style = 'app') {
+  const items = [];
+  if (art.sectionTitle && art.sectionTitle !== (prev && prev.sectionTitle)) {
+    items.push(['section', art.sectionTitle]);
+  }
+  if (art.subsectionTitle && (art.subsectionTitle !== (prev && prev.subsectionTitle) || (items.length && items[0][0] === 'section'))) {
+    items.push(['subsection', art.subsectionTitle]);
+  }
+  return items.map(([lvl, text]) => {
+    if (style === 'doc') {
+      const st = lvl === 'section'
+        ? "font-family:'Times New Roman',serif;font-size:13pt;font-weight:bold;margin:10pt 0 4pt;text-transform:uppercase;"
+        : "font-family:'Times New Roman',serif;font-size:13pt;font-weight:bold;font-style:italic;margin:8pt 0 4pt;";
+      return `<p style="${st}">${esc(text)}</p>`;
+    }
+    return `<div class="${lvl}-header">${esc(text)}</div>`;
+  }).join('');
+}
+
+function lawTocBreaksHtml(art, prev) {
+  let out = '';
+  if (art.sectionTitle && art.sectionTitle !== (prev && prev.sectionTitle)) {
+    out += `<li class="toc-chapter" style="padding-left:0.9rem;opacity:0.9;">${escapeHtml(art.sectionTitle)}</li>`;
+  }
+  if (art.subsectionTitle && (art.subsectionTitle !== (prev && prev.subsectionTitle) || out)) {
+    out += `<li class="toc-chapter" style="padding-left:1.4rem;opacity:0.8;font-style:italic;">${escapeHtml(art.subsectionTitle)}</li>`;
+  }
+  return out;
 }
 
 function extractArticleHighlights(text, art) {
@@ -507,7 +646,7 @@ function formatLegalText(rawStr) {
     html = html.replace(new RegExp(`(${q})`, 'gi'), '<mark class="hl-search">$1</mark>');
   }
 
-  return html;
+  return html.replace(/\n/g, '<br>');
 }
 
 function escapeHtml(str) {
@@ -544,7 +683,7 @@ function buildQuizletClozePool(law) {
   law.articles.forEach(art => {
     const sentences = [
       ...art.preamble,
-      ...art.clauses.map(c => `Khoản ${c.number}: ${c.text}`)
+      ...art.clauses.map(c => `${clauseLabel(c, ':')} ${c.text}`.replace(/\s*\n\s*/g, ' '))
     ];
 
     sentences.forEach(sent => {
@@ -741,9 +880,13 @@ function renderSidebar() {
 
   const tocEl = document.getElementById('toc-list');
   let html = '';
-  AppState.lawData.chapters.forEach(chap => {
+  AppState.lawData.chapters.forEach((chap, ci, chapArr) => {
+    if (chap.partTitle && chap.partTitle !== (chapArr[ci - 1] && chapArr[ci - 1].partTitle)) {
+      html += `<li class="toc-chapter">${escapeHtml(chap.partTitle)}</li>`;
+    }
     html += `<li class="toc-chapter">${escapeHtml(chap.code)}${chap.title ? ': ' + escapeHtml(chap.title) : ''}</li>`;
-    chap.articles.forEach(art => {
+    chap.articles.forEach((art, ai) => {
+      html += lawTocBreaksHtml(art, chap.articles[ai - 1]);
       const st = AppState.studyProgress[art.id]?.status || 'unread';
       const dotClass = st === 'mastered' ? 'dot-mastered' : st === 'review' ? 'dot-review' : 'dot-unread';
       html += `
@@ -878,7 +1021,10 @@ function renderStudyView(container) {
     </div>
   `;
 
-  filteredChapters.forEach(chap => {
+  filteredChapters.forEach((chap, ci, chapArr) => {
+    if (chap.partTitle && chap.partTitle !== (chapArr[ci - 1] && chapArr[ci - 1].partTitle)) {
+      html += `<div class="part-header">${escapeHtml(chap.partTitle)}</div>`;
+    }
     html += `
       <div class="chapter-header">
         <h3>${escapeHtml(chap.code)}${chap.title ? ' — ' + escapeHtml(chap.title) : ''}</h3>
@@ -886,7 +1032,8 @@ function renderStudyView(container) {
       </div>
     `;
 
-    chap.articles.forEach(art => {
+    chap.articles.forEach((art, ai) => {
+      html += lawBreaksHtml(art, chap.articles[ai - 1]);
       const st = AppState.studyProgress[art.id]?.status || 'unread';
       const note = AppState.studyProgress[art.id]?.note || '';
       const isSpeakingThis = AppState.speakingArticleId === art.id;
@@ -920,7 +1067,7 @@ function renderStudyView(container) {
               ${art.clauses.map(clause => `
                 <div class="clause-item">
                   <div class="clause-head">
-                    <span class="clause-badge">Khoản ${escapeHtml(clause.number)}</span>
+                    <span class="clause-badge">${clause.implicit ? 'Các điểm' : 'Khoản ' + escapeHtml(clause.number)}</span>
                     <div class="clause-text">${formatLegalText(clause.text)}</div>
                   </div>
                   ${clause.points.length > 0 ? `
@@ -1180,12 +1327,14 @@ function renderExamView(container) {
     `;
   });
 
+  html += '<div id="glossary-panel" class="glossary-panel" style="display:none;"></div>';
   container.innerHTML = html;
+  updateGlossaryPanel();
 }
 
 function buildAutoExamFromLaw(law) {
   return law.articles.slice(0, 15).map((art, idx) => {
-    const correct = art.clauses[0]?.text || art.preamble[0] || art.title;
+    const correct = (art.clauses[0]?.text || art.preamble[0] || art.title).replace(/\s*\n\s*/g, ' ');
     return {
       id: `auto_q_${idx}`,
       lawKey: 'custom',
@@ -1863,7 +2012,7 @@ function renderTextReaderModalContent() {
       const reg = new RegExp(`(${escapeRegExp(escapeHtml(q))})`, 'gi');
       safe = safe.replace(reg, '<mark class="hl-search">$1</mark>');
     }
-    return safe;
+    return safe.replace(/\n/g, '<br>');
   };
 
   // ==========================================
@@ -2130,16 +2279,16 @@ function renderTextReaderModalContent() {
             <div style="margin:1.1rem 0 0.5rem;font-weight:bold;text-transform:uppercase;color:#0f172a;font-size:1rem;">
               ${escapeHtml(chap.code)}${chap.title ? ' - ' + escapeHtml(chap.title) : ''}
             </div>
-            ${chap.articles.map(art => `
+            ${chap.articles.map((art, ai) => `${lawBreaksHtml(art, chap.articles[ai - 1], escapeHtml, 'doc')}
               <div style="margin-bottom:0.75rem;">
                 <div style="font-weight:bold;">${escapeHtml(art.code)}. ${escapeHtml(art.title)}</div>
                 ${art.preamble.map(p => `<p style="margin:0.25rem 0;text-indent:1.2rem;">${escapeHtml(p)}</p>`).join('')}
                 ${art.clauses.map(c => `
                   <div style="margin:0.25rem 0;text-indent:1.2rem;">
-                    <strong>Khoản ${escapeHtml(c.number)}.</strong> ${escapeHtml(c.text)}
+                    <strong>${clauseLabel(c, '.')}</strong> ${escapeHtml(c.text).replace(/\n/g, '<br>')}
                     ${c.points.map(pt => `
                       <div style="margin:0.18rem 0;text-indent:2.2rem;">
-                        <i>Điểm ${escapeHtml(pt.letter)})</i> ${escapeHtml(pt.text)}
+                        <i>Điểm ${escapeHtml(pt.letter)})</i> ${escapeHtml(pt.text).replace(/\n/g, '<br>')}
                       </div>
                     `).join('')}
                   </div>
@@ -2292,13 +2441,17 @@ function renderTextReaderModalContent() {
   `;
 
   if (parsed.chapters && parsed.chapters.length > 0) {
-    parsed.chapters.forEach(chap => {
+    parsed.chapters.forEach((chap, ci, chapArr) => {
+      if (chap.partTitle && chap.partTitle !== (chapArr[ci - 1] && chapArr[ci - 1].partTitle)) {
+        html += `<div class="reader-part-title">${highlightReaderStr(chap.partTitle)}</div>`;
+      }
       html += `
         <div class="reader-chapter-block">
           <div class="reader-chapter-title">${highlightReaderStr(chap.code)}${chap.title ? ' — ' + highlightReaderStr(chap.title) : ''}</div>
-          ${chap.articles.map(art => {
+          ${chap.articles.map((art, ai) => {
             const inlineDiffHtml = renderInlineDiffNotesForArticle(art.code, art.title);
             return `
+              ${lawBreaksHtml(art, chap.articles[ai - 1], highlightReaderStr)}
               <div class="reader-article-block">
                 <div class="reader-article-heading">
                   <strong>${highlightReaderStr(art.code)}.</strong> ${highlightReaderStr(art.title)}
@@ -2310,7 +2463,7 @@ function renderTextReaderModalContent() {
                 ${art.preamble.map(p => `<p class="reader-paragraph">${highlightReaderStr(p)}</p>`).join('')}
                 ${art.clauses.map(c => `
                   <div class="reader-clause-row">
-                    <strong>Khoản ${escapeHtml(c.number)}.</strong> ${highlightReaderStr(c.text)}
+                    <strong>${clauseLabel(c, '.')}</strong> ${highlightReaderStr(c.text)}
                     ${c.points.map(pt => `
                       <div class="reader-point-row">
                         <strong>Điểm ${escapeHtml(pt.letter)})</strong> ${highlightReaderStr(pt.text)}
@@ -2472,7 +2625,7 @@ function downloadDocDocx(docId) {
       </h3>
       ${chap.articles
         .map(
-          art => `
+          (art, ai) => `${lawBreaksHtml(art, chap.articles[ai - 1], escapeHtml, 'doc')}
         <p style="font-family:'Times New Roman',serif;font-size:13pt;margin-bottom:4pt;">
           <b>${escapeHtml(art.code)}. ${escapeHtml(art.title)}</b>
         </p>
@@ -2481,13 +2634,13 @@ function downloadDocDocx(docId) {
           .map(
             c => `
           <p style="font-family:'Times New Roman',serif;font-size:13pt;margin:3pt 0;">
-            <b>Khoản ${escapeHtml(c.number)}.</b> ${escapeHtml(c.text)}
+            <b>${clauseLabel(c, '.')}</b> ${escapeHtml(c.text).replace(/\n/g, '<br>')}
           </p>
           ${c.points
             .map(
               pt => `
             <p style="font-family:'Times New Roman',serif;font-size:13pt;margin:2pt 0 2pt 18pt;">
-              <i>Điểm ${escapeHtml(pt.letter)})</i> ${escapeHtml(pt.text)}
+              <i>Điểm ${escapeHtml(pt.letter)})</i> ${escapeHtml(pt.text).replace(/\n/g, '<br>')}
             </p>
           `
             )
@@ -2638,14 +2791,14 @@ function downloadDocPdf(docId) {
     <div style="font-size:12pt;line-height:1.6;color:#111;">
       ${parsed.chapters.map(chap => `
         <div style="font-weight:bold;text-transform:uppercase;margin:14px 0 6px;">${escapeHtml(chap.code)}${chap.title ? ' - ' + escapeHtml(chap.title) : ''}</div>
-        ${chap.articles.map(art => `
+        ${chap.articles.map((art, ai) => `${lawBreaksHtml(art, chap.articles[ai - 1], escapeHtml, 'doc')}
           <div style="margin-bottom:8px;">
             <div style="font-weight:bold;">${escapeHtml(art.code)}. ${escapeHtml(art.title)}</div>
             ${art.preamble.map(p => `<p style="margin:3px 0;text-indent:15px;">${escapeHtml(p)}</p>`).join('')}
             ${art.clauses.map(c => `
               <div style="margin:3px 0;text-indent:15px;">
-                <strong>Khoản ${escapeHtml(c.number)}.</strong> ${escapeHtml(c.text)}
-                ${c.points.map(pt => `<div style="margin:2px 0;text-indent:30px;"><i>Điểm ${escapeHtml(pt.letter)})</i> ${escapeHtml(pt.text)}</div>`).join('')}
+                <strong>${clauseLabel(c, '.')}</strong> ${escapeHtml(c.text).replace(/\n/g, '<br>')}
+                ${c.points.map(pt => `<div style="margin:2px 0;text-indent:30px;"><i>Điểm ${escapeHtml(pt.letter)})</i> ${escapeHtml(pt.text).replace(/\n/g, '<br>')}</div>`).join('')}
               </div>
             `).join('')}
           </div>
@@ -2833,9 +2986,132 @@ function toggleCompactMode() {
   renderMainArea();
 }
 
+// ==========================================
+// CHÚ THÍCH THUẬT NGỮ — hiện ở cuối trang khi bấm vào một Điều (tab Học luật)
+// Nguồn 1: định nghĩa trong điều "Giải thích từ ngữ" của chính văn bản đang học (chính xác nhất)
+// Nguồn 2: bộ giải thích khái quát có sẵn (chỉ để tham khảo)
+// ==========================================
+const BUILTIN_LEGAL_GLOSSARY = [
+  { term: 'văn bản quy phạm pháp luật', def: 'Văn bản có chứa quy tắc xử sự chung, có hiệu lực bắt buộc, do cơ quan có thẩm quyền ban hành theo đúng hình thức, trình tự, thủ tục luật định.' },
+  { term: 'nghị định', def: 'Văn bản do Chính phủ ban hành để quy định chi tiết thi hành luật, nghị quyết hoặc quy định các vấn đề thuộc thẩm quyền của Chính phủ.' },
+  { term: 'thông tư', def: 'Văn bản do Bộ trưởng, Thủ trưởng cơ quan ngang bộ ban hành để hướng dẫn thi hành văn bản cấp trên trong phạm vi quản lý ngành, lĩnh vực.' },
+  { term: 'hiệu lực thi hành', def: 'Thời điểm văn bản bắt đầu có giá trị bắt buộc áp dụng.' },
+  { term: 'bãi bỏ', def: 'Chấm dứt hiệu lực của một văn bản hoặc một quy định đã ban hành kể từ thời điểm nhất định.' },
+  { term: 'sửa đổi, bổ sung', def: 'Thay đổi hoặc thêm quy định vào văn bản đang có hiệu lực; văn bản gốc vẫn tiếp tục tồn tại.' },
+  { term: 'văn bản hợp nhất', def: 'Văn bản tập hợp nội dung của văn bản gốc và các văn bản sửa đổi, bổ sung thành một văn bản thống nhất, không làm thay đổi nội dung.' },
+  { term: 'thẩm quyền', def: 'Phạm vi quyền hạn và trách nhiệm mà pháp luật cho phép một cơ quan hoặc một người thực hiện.' },
+  { term: 'công vụ', def: 'Hoạt động thực thi nhiệm vụ, quyền hạn của cán bộ, công chức theo quy định của pháp luật.' },
+  { term: 'vị trí việc làm', def: 'Công việc gắn với chức danh, chức vụ, cơ cấu và ngạch (hạng) để xác định biên chế và bố trí người làm việc trong cơ quan, tổ chức, đơn vị.' },
+  { term: 'biên chế', def: 'Số lượng người làm việc do cấp có thẩm quyền giao hoặc phê duyệt cho cơ quan, tổ chức, đơn vị.' },
+  { term: 'đơn vị sự nghiệp công lập', def: 'Tổ chức do cơ quan nhà nước có thẩm quyền thành lập, có tư cách pháp nhân, cung cấp dịch vụ công, phục vụ quản lý nhà nước.' },
+  { term: 'ngày làm việc', def: 'Ngày làm việc theo quy định của pháp luật, thường không tính thứ Bảy, Chủ nhật và ngày nghỉ lễ, Tết.' },
+  { term: 'tham nhũng', def: 'Hành vi của người có chức vụ, quyền hạn đã lợi dụng chức vụ, quyền hạn đó vì vụ lợi.' },
+  { term: 'người có chức vụ, quyền hạn', def: 'Người được giao thực hiện nhiệm vụ nhất định và có quyền hạn nhất định khi thực hiện nhiệm vụ đó, do bổ nhiệm, bầu cử, hợp đồng hoặc hình thức khác, có hưởng lương hoặc không.' },
+  { term: 'xung đột lợi ích', def: 'Tình huống mà lợi ích của người có chức vụ, quyền hạn hoặc người thân thích của họ ảnh hưởng hoặc có thể ảnh hưởng không đúng đến việc thực hiện nhiệm vụ, công vụ.' },
+  { term: 'thông điệp dữ liệu', def: 'Thông tin được tạo ra, gửi đi, nhận và lưu trữ bằng phương tiện điện tử.' },
+  { term: 'chữ ký điện tử', def: 'Chữ ký được tạo lập dưới dạng dữ liệu điện tử gắn với thông điệp dữ liệu, dùng để xác nhận người ký và sự chấp thuận của người đó đối với nội dung được ký.' },
+  { term: 'giao dịch điện tử', def: 'Giao dịch được thực hiện bằng phương tiện điện tử.' },
+  { term: 'kế toán', def: 'Công việc thu thập, xử lý, kiểm tra, phân tích và cung cấp thông tin kinh tế, tài chính dưới hình thức giá trị, hiện vật và thời gian lao động.' },
+  { term: 'chứng từ kế toán', def: 'Giấy tờ và vật mang tin phản ánh nghiệp vụ kinh tế, tài chính đã phát sinh và hoàn thành, làm căn cứ ghi sổ kế toán.' },
+  { term: 'ngân sách nhà nước', def: 'Toàn bộ các khoản thu, chi của Nhà nước được dự toán và thực hiện trong một khoảng thời gian nhất định, do cơ quan nhà nước có thẩm quyền quyết định để bảo đảm thực hiện chức năng, nhiệm vụ của Nhà nước.' },
+  { term: 'hợp đồng lao động', def: 'Thỏa thuận giữa người lao động và người sử dụng lao động về việc làm có trả công, tiền lương, điều kiện lao động, quyền và nghĩa vụ của mỗi bên.' },
+  { term: 'thử việc', def: 'Giai đoạn người lao động làm thử theo thỏa thuận để đánh giá khả năng đáp ứng yêu cầu công việc trước khi giao kết hợp đồng chính thức.' }
+];
+
+function lawTermRegex(term) {
+  const esc = escapeRegExp(term);
+  try {
+    return new RegExp(`(?<![\\p{L}\\p{N}])${esc}(?![\\p{L}\\p{N}])`, 'iu');
+  } catch (e) {
+    return new RegExp(esc, 'i');   // trình duyệt cũ không hỗ trợ lookbehind
+  }
+}
+
+// Lấy định nghĩa từ điều "Giải thích từ ngữ" của chính văn bản
+function extractLawDefinitions(law) {
+  const defs = [];
+  const defRe = /^[“"'‘]?(.{2,80}?)[”"'’]?\s+là\s+(.{10,})$/u;
+  (law.articles || []).forEach(art => {
+    if (!/giải thích/i.test(art.title || '')) return;
+    const add = text => {
+      const m = (text || '').replace(/\s*\n\s*/g, ' ').match(defRe);
+      if (!m) return;
+      const term = m[1].replace(/^[“"'‘]+|[”"'’]+$/g, '').trim();
+      if (!term || term.split(/\s+/).length > 10) return;
+      defs.push({ term, def: m[2].trim(), source: `Theo ${art.code} của văn bản này`, own: true });
+    };
+    art.clauses.forEach(c => {
+      add(c.text);
+      c.points.forEach(p => add(p.text));
+    });
+  });
+  return defs;
+}
+
+function getLawGlossary(law) {
+  if (law._glossary) return law._glossary;
+  const own = extractLawDefinitions(law);
+  const seen = new Set(own.map(d => d.term.toLowerCase()));
+  const builtin = BUILTIN_LEGAL_GLOSSARY
+    .filter(b => !seen.has(b.term.toLowerCase()))
+    .map(b => ({ ...b, source: 'Giải thích khái quát (tham khảo)', own: false }));
+  law._glossary = [...own, ...builtin].map(e => ({ ...e, re: lawTermRegex(e.term) }));
+  return law._glossary;
+}
+
+function findTermsInArticle(art, law) {
+  const text = art.fullText || '';
+  return getLawGlossary(law)
+    .filter(e => e.term.length >= 3 && e.re.test(text))
+    .slice(0, 12);
+}
+
+function renderGlossaryPanelHtml() {
+  const law = AppState.lawData;
+  const art = AppState.glossaryArticleId && law && law.articles.find(a => a.id === AppState.glossaryArticleId);
+  if (!art) return '';
+  const terms = findTermsInArticle(art, law);
+  const items = terms.length
+    ? terms.map(t => `
+        <div class="glossary-item">
+          <strong>${escapeHtml(t.term)}</strong>: ${escapeHtml(t.def)}
+          <span class="glossary-src ${t.own ? 'own' : ''}">${escapeHtml(t.source)}</span>
+        </div>`).join('')
+    : '<div class="glossary-empty">Điều này chưa có thuật ngữ nào cần chú thích.</div>';
+  return `
+    <div class="glossary-head">
+      <strong>📖 Chú thích thuật ngữ — ${escapeHtml(art.code)}: ${escapeHtml(art.title)}</strong>
+      <button class="btn btn-sm" onclick="closeGlossaryPanel()" aria-label="Đóng chú thích">✖</button>
+    </div>
+    <div class="glossary-body">${items}</div>
+    <div class="glossary-foot">Giải thích khái quát chỉ để tham khảo; khi làm bài hãy ưu tiên định nghĩa trong điều “Giải thích từ ngữ” của chính văn bản.</div>
+  `;
+}
+
+function updateGlossaryPanel() {
+  document.querySelectorAll('.article-card.glossary-active').forEach(el => el.classList.remove('glossary-active'));
+  const el = document.getElementById('glossary-panel');
+  if (!el) return;
+  const html = renderGlossaryPanelHtml();
+  el.innerHTML = html;
+  el.style.display = html ? 'block' : 'none';
+  if (html) document.getElementById(`card-${AppState.glossaryArticleId}`)?.classList.add('glossary-active');
+}
+
+function showArticleGlossary(articleId) {
+  AppState.glossaryArticleId = articleId;
+  updateGlossaryPanel();
+}
+
+function closeGlossaryPanel() {
+  AppState.glossaryArticleId = null;
+  updateGlossaryPanel();
+}
+
 function toggleArticleCollapse(articleId) {
   const bodyEl = document.getElementById(`body-${articleId}`);
   if (bodyEl) bodyEl.classList.toggle('collapsed');
+  showArticleGlossary(articleId);
 }
 
 function speakArticle(articleId) {
@@ -2859,7 +3135,7 @@ function speakArticle(articleId) {
   renderMainArea();
 
   const clausesSpeech = art.clauses
-    .map(c => `Khoản ${c.number}. ${c.text}. ${c.points.map(p => `Điểm ${p.letter}, ${p.text}`).join('. ')}`)
+    .map(c => `${clauseLabel(c, '.')} ${c.text}. ${c.points.map(p => `Điểm ${p.letter}, ${p.text}`).join('. ')}`)
     .join('. ');
   const fullSpeech = `${art.code}. ${art.title}. ${art.preamble.join('. ')} ${clausesSpeech}`;
 
@@ -2917,7 +3193,7 @@ function speakArticleQueue(index) {
   }
 
   const clausesSpeech = art.clauses
-    .map(c => `Khoản ${c.number}. ${c.text}. ${c.points.map(p => `Điểm ${p.letter}, ${p.text}`).join('. ')}`)
+    .map(c => `${clauseLabel(c, '.')} ${c.text}. ${c.points.map(p => `Điểm ${p.letter}, ${p.text}`).join('. ')}`)
     .join('. ');
   const fullSpeech = `${art.code}. ${art.title}. ${art.preamble.join('. ')} ${clausesSpeech}`;
 
@@ -3033,6 +3309,26 @@ function scrollToArticle(articleId) {
   }
 }
 
+// PDF chỉ có dòng "ngắt hiển thị" -> nối các dòng bị ngắt giữa câu, giữ nguyên chỗ xuống dòng thật
+function unwrapPdfLines(text) {
+  const startRe = /^(Điều\s+\d|CHƯƠNG\s|Chương\s|MỤC\s|Mục\s|TIỂU MỤC\s|Tiểu mục\s|PHẦN\s|Phần\s|\d{1,3}\.(\s|$)|[a-zđ]\)(\s|$)|[-•+]\s)/u;
+  const headingRe = /^(Điều\s+\d|CHƯƠNG\s|Chương\s|MỤC\s|Mục\s|TIỂU MỤC\s|Tiểu mục\s|PHẦN\s|Phần\s)/u;
+  const out = [];
+  text.normalize('NFC').split('\n').forEach(raw => {
+    const line = raw.trim();
+    if (!line) return;
+    const prev = out.length ? out[out.length - 1] : '';
+    const startsLower = /^\p{Ll}/u.test(line);
+    const merge =
+      prev &&
+      !startRe.test(line) &&
+      (startsLower ? !/[.!?]$/.test(prev) : (!/[.;:!?”"…]$/.test(prev) && !headingRe.test(prev)));
+    if (merge) out[out.length - 1] = `${prev} ${line}`;
+    else out.push(line);
+  });
+  return out.join('\n');
+}
+
 async function handleFileUpload(file) {
   if (!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
@@ -3049,8 +3345,24 @@ async function handleFileUpload(file) {
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
-        text += content.items.map(it => it.str).join(' ') + '\n';
+        let lastY = null;
+        let buf = '';
+        content.items.forEach(it => {
+          const y = Math.round(it.transform[5]);
+          if (lastY !== null && Math.abs(y - lastY) > 2) {
+            text += buf.trim() + '\n';
+            buf = '';
+          }
+          buf += (buf && !buf.endsWith(' ') && !it.str.startsWith(' ') ? ' ' : '') + it.str;
+          if (it.hasEOL) {
+            text += buf.trim() + '\n';
+            buf = '';
+          }
+          lastY = y;
+        });
+        text += buf.trim() + '\n';
       }
+      text = unwrapPdfLines(text);
     } else {
       text = await file.text();
     }

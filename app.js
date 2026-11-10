@@ -318,11 +318,14 @@ function parseVietnameseLaw(rawText, meta = {}) {
   const joinText = (a, b) => (a ? `${a}\n${b}` : b);   // giữ nguyên xuống dòng của bản gốc
   const lawKey = (meta.code || 'law').replace(/[^a-zA-Z0-9]/g, '_');
 
+  // Tên Điều/Chương/Mục không kết thúc bằng dấu câu và không quá dài (Hiến pháp: Điều không có tên, dòng sau là nội dung)
+  const looksLikeTitle = s => s.length <= 250 && !/[.;:,]$/.test(s);
+
   // Lấy tiêu đề: cùng dòng hoặc dòng kế tiếp (không phải dòng cấu trúc)
   const takeTitle = (sameLine, i, allowMultiLine) => {
     let title = cleanTitle(sameLine);
     let skip = 0;
-    if (!title && i + 1 < lines.length && !isStructural(lines[i + 1])) {
+    if (!title && i + 1 < lines.length && !isStructural(lines[i + 1]) && looksLikeTitle(lines[i + 1])) {
       title = cleanTitle(lines[i + 1]);
       skip = 1;
       // Tiêu đề Chương/Phần có thể xuống 2 dòng IN HOA
@@ -437,7 +440,7 @@ function parseVietnameseLaw(rawText, meta = {}) {
       currentArticle = {
         id: artId,
         code: artCode,
-        title: title || 'Quy định chi tiết',
+        title: title || '',
         partTitle: currentChapter.partTitle || '',
         chapterCode: currentChapter.code,
         chapterTitle: currentChapter.title,
@@ -502,6 +505,30 @@ function parseVietnameseLaw(rawText, meta = {}) {
   }
 
   flushChapter();
+
+  // "LỜI NÓI ĐẦU" (Hiến pháp): giữ lại thành mục riêng đứng đầu
+  const preambleIdx = introLines.findIndex(l => /^LỜI NÓI ĐẦU$/i.test(l));
+  if (preambleIdx >= 0 && allArticles.length > 0 && introLines.length > preambleIdx + 1) {
+    const body = introLines.slice(preambleIdx + 1);
+    const art = {
+      id: `${lawKey}_Loi_noi_dau`,
+      code: 'Lời nói đầu',
+      title: '',
+      partTitle: '',
+      chapterCode: 'LỜI NÓI ĐẦU',
+      chapterTitle: '',
+      sectionTitle: null,
+      subsectionTitle: null,
+      preamble: body.slice(),
+      clauses: [],
+      rawLines: body.slice()
+    };
+    const ch = newChapter('LỜI NÓI ĐẦU', '', '');
+    ch.id = 'chap-loi-noi-dau';
+    ch.articles.push(art);
+    chapters.unshift(ch);
+    allArticles.unshift(art);
+  }
 
   // Văn bản không có "Điều" nào (văn bản thường): gom thành một mục nội dung
   if (allArticles.length === 0 && introLines.length > 0) {
@@ -721,10 +748,10 @@ function buildQuizletClozePool(law) {
 
   // Nếu văn bản ngắn ít số liệu, tự tạo câu điền tên Điều luật
   if (pool.length === 0) {
-    law.articles.forEach(art => {
+    law.articles.filter(a => a.title).forEach(art => {
       const answer = art.title;
       const others = law.articles
-        .filter(a => a.id !== art.id)
+        .filter(a => a.id !== art.id && a.title)
         .map(a => a.title)
         .slice(0, 3);
       while (others.length < 3) others.push('Quy định chung và điều khoản thi hành');
@@ -892,7 +919,7 @@ function renderSidebar() {
       html += `
         <li class="toc-item" onclick="scrollToArticle('${art.id}'); closeMobileSidebar();">
           <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-            <strong>${escapeHtml(art.code)}:</strong> ${escapeHtml(art.title)}
+            <strong>${escapeHtml(art.code)}${art.title ? ':' : ''}</strong> ${escapeHtml(art.title)}
           </span>
           <span class="toc-status-dot ${dotClass}"></span>
         </li>
@@ -904,6 +931,7 @@ function renderSidebar() {
 
 function renderMainArea() {
   const container = document.getElementById('main-view-container');
+  updateGlossaryPanel();
   if (AppState.currentMode === 'amend') {
     renderOtherLawsView(container);
     return;
@@ -1096,6 +1124,7 @@ function renderStudyView(container) {
   });
 
   container.innerHTML = html;
+  updateGlossaryPanel();
 }
 
 // --- TAB 2: HỌC NHANH (KIỂU QUIZLET ĐIỀN VÀO Ô TRỐNG NGẪU NHIÊN - LIÊN KẾT DANH SÁCH VĂN BẢN ĐANG HỌC) ---
@@ -1327,9 +1356,7 @@ function renderExamView(container) {
     `;
   });
 
-  html += '<div id="glossary-panel" class="glossary-panel" style="display:none;"></div>';
   container.innerHTML = html;
-  updateGlossaryPanel();
 }
 
 function buildAutoExamFromLaw(law) {
@@ -1339,7 +1366,7 @@ function buildAutoExamFromLaw(law) {
       id: `auto_q_${idx}`,
       lawKey: 'custom',
       refArticle: art.code,
-      question: `Theo ${art.code} (${art.title}), nội dung nào sau đây được quy định đúng?`,
+      question: `Theo ${art.code}${art.title ? ` (${art.title})` : ''}, nội dung nào sau đây được quy định đúng?`,
       options: [
         correct.slice(0, 160),
         'Không thuộc phạm vi điều chỉnh của văn bản này.',
@@ -1347,7 +1374,7 @@ function buildAutoExamFromLaw(law) {
         'Tất cả các phương án đều không chính xác.'
       ],
       correctIndex: 0,
-      explanation: `Căn cứ trực tiếp tại ${art.code}: ${art.title}.`
+      explanation: `Căn cứ trực tiếp tại ${art.code}${art.title ? ': ' + art.title : ''}.`
     };
   });
 }
@@ -2281,7 +2308,7 @@ function renderTextReaderModalContent() {
             </div>
             ${chap.articles.map((art, ai) => `${lawBreaksHtml(art, chap.articles[ai - 1], escapeHtml, 'doc')}
               <div style="margin-bottom:0.75rem;">
-                <div style="font-weight:bold;">${escapeHtml(art.code)}. ${escapeHtml(art.title)}</div>
+                <div style="font-weight:bold;">${escapeHtml(art.code)}${art.title ? '. ' + escapeHtml(art.title) : ''}</div>
                 ${art.preamble.map(p => `<p style="margin:0.25rem 0;text-indent:1.2rem;">${escapeHtml(p)}</p>`).join('')}
                 ${art.clauses.map(c => `
                   <div style="margin:0.25rem 0;text-indent:1.2rem;">
@@ -2454,7 +2481,7 @@ function renderTextReaderModalContent() {
               ${lawBreaksHtml(art, chap.articles[ai - 1], highlightReaderStr)}
               <div class="reader-article-block">
                 <div class="reader-article-heading">
-                  <strong>${highlightReaderStr(art.code)}.</strong> ${highlightReaderStr(art.title)}
+                  <strong>${highlightReaderStr(art.code)}${art.title ? '.' : ''}</strong> ${highlightReaderStr(art.title)}
                 </div>
 
                 <!-- NOTE ĐIỂM KHÁC BIỆT GẮN TRỰC TIẾP TRÊN ĐIỀU NÀY -->
@@ -2627,7 +2654,7 @@ function downloadDocDocx(docId) {
         .map(
           (art, ai) => `${lawBreaksHtml(art, chap.articles[ai - 1], escapeHtml, 'doc')}
         <p style="font-family:'Times New Roman',serif;font-size:13pt;margin-bottom:4pt;">
-          <b>${escapeHtml(art.code)}. ${escapeHtml(art.title)}</b>
+          <b>${escapeHtml(art.code)}${art.title ? '. ' + escapeHtml(art.title) : ''}</b>
         </p>
         ${art.preamble.map(p => `<p style="font-family:'Times New Roman',serif;font-size:13pt;margin:3pt 0;">${escapeHtml(p)}</p>`).join('')}
         ${art.clauses
@@ -2793,7 +2820,7 @@ function downloadDocPdf(docId) {
         <div style="font-weight:bold;text-transform:uppercase;margin:14px 0 6px;">${escapeHtml(chap.code)}${chap.title ? ' - ' + escapeHtml(chap.title) : ''}</div>
         ${chap.articles.map((art, ai) => `${lawBreaksHtml(art, chap.articles[ai - 1], escapeHtml, 'doc')}
           <div style="margin-bottom:8px;">
-            <div style="font-weight:bold;">${escapeHtml(art.code)}. ${escapeHtml(art.title)}</div>
+            <div style="font-weight:bold;">${escapeHtml(art.code)}${art.title ? '. ' + escapeHtml(art.title) : ''}</div>
             ${art.preamble.map(p => `<p style="margin:3px 0;text-indent:15px;">${escapeHtml(p)}</p>`).join('')}
             ${art.clauses.map(c => `
               <div style="margin:3px 0;text-indent:15px;">
@@ -3080,7 +3107,7 @@ function renderGlossaryPanelHtml() {
     : '<div class="glossary-empty">Điều này chưa có thuật ngữ nào cần chú thích.</div>';
   return `
     <div class="glossary-head">
-      <strong>📖 Chú thích thuật ngữ — ${escapeHtml(art.code)}: ${escapeHtml(art.title)}</strong>
+      <strong>📖 Chú thích thuật ngữ — ${escapeHtml(art.code)}${art.title ? ': ' + escapeHtml(art.title) : ''}</strong>
       <button class="btn btn-sm" onclick="closeGlossaryPanel()" aria-label="Đóng chú thích">✖</button>
     </div>
     <div class="glossary-body">${items}</div>
@@ -3090,11 +3117,19 @@ function renderGlossaryPanelHtml() {
 
 function updateGlossaryPanel() {
   document.querySelectorAll('.article-card.glossary-active').forEach(el => el.classList.remove('glossary-active'));
-  const el = document.getElementById('glossary-panel');
-  if (!el) return;
-  const html = renderGlossaryPanelHtml();
+  let el = document.getElementById('glossary-panel');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'glossary-panel';
+    el.className = 'glossary-panel';
+    el.style.display = 'none';
+    document.body.appendChild(el);
+  }
+  // Chỉ hiện ở tab Học luật
+  const html = AppState.currentMode === 'study' ? renderGlossaryPanelHtml() : '';
   el.innerHTML = html;
   el.style.display = html ? 'block' : 'none';
+  document.body.classList.toggle('has-glossary', !!html);
   if (html) document.getElementById(`card-${AppState.glossaryArticleId}`)?.classList.add('glossary-active');
 }
 
@@ -3137,7 +3172,7 @@ function speakArticle(articleId) {
   const clausesSpeech = art.clauses
     .map(c => `${clauseLabel(c, '.')} ${c.text}. ${c.points.map(p => `Điểm ${p.letter}, ${p.text}`).join('. ')}`)
     .join('. ');
-  const fullSpeech = `${art.code}. ${art.title}. ${art.preamble.join('. ')} ${clausesSpeech}`;
+  const fullSpeech = `${art.code}. ${art.title ? art.title + '. ' : ''}${art.preamble.join('. ')} ${clausesSpeech}`;
 
   const utter = new SpeechSynthesisUtterance(fullSpeech);
   utter.lang = 'vi-VN';
@@ -3151,7 +3186,7 @@ function speakArticle(articleId) {
     renderMainArea();
   };
   window.speechSynthesis.speak(utter);
-  showToast(`🔊 Đang đọc ${art.code}: ${art.title}`);
+  showToast(`🔊 Đang đọc ${art.code}${art.title ? ': ' + art.title : ''}`);
 }
 
 function toggleSpeakFullDocument() {
@@ -3195,7 +3230,7 @@ function speakArticleQueue(index) {
   const clausesSpeech = art.clauses
     .map(c => `${clauseLabel(c, '.')} ${c.text}. ${c.points.map(p => `Điểm ${p.letter}, ${p.text}`).join('. ')}`)
     .join('. ');
-  const fullSpeech = `${art.code}. ${art.title}. ${art.preamble.join('. ')} ${clausesSpeech}`;
+  const fullSpeech = `${art.code}. ${art.title ? art.title + '. ' : ''}${art.preamble.join('. ')} ${clausesSpeech}`;
 
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(fullSpeech);
